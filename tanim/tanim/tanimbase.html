@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="app-root" content="../../">
+  <title>TanimBase – Roots</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">  <!-- kung walay wifi di mo gana -->
+  <link rel="stylesheet" href="tanimbase.css">
+  <link rel="stylesheet" href="../../shared/dropdowns.css">
+  <link rel="stylesheet" href="../../shared/nav.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════ -->
+<main class="main-content">
+
+  <!-- LIST VIEW -->
+  <div id="view-list">
+
+    <div class="hero-banner">
+      <div class="hero-text">
+        <div class="hero-eyebrow">Plant Database</div>
+        <h1 class="hero-title">Philippine Plant Guide</h1>
+        <p class="hero-sub">Search and learn about local plants — their uses, care tips, and characteristics.</p>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num" id="total-count">—</div>
+          <div class="hero-stat-label">Total Plants</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">6</div>
+          <div class="hero-stat-label">Categories</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search bar above chips -->
+    <div class="search-bar-wrap">
+      <div class="search-bar-inner">
+        <i class="material-icons">search</i>
+        <input type="search" id="search-input"
+          placeholder="Search plants by name, use, or region…"
+          oninput="handleSearch(this.value)"
+          autocomplete="off">
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <div class="chips" id="filter-chips">
+        <span class="chip active" onclick="setFilter('all', this)">🌱 All Plants</span>
+        <span class="chip" onclick="setFilter('medicinal', this)">💊 Medicinal</span>
+        <span class="chip" onclick="setFilter('edible', this)">🥗 Edible</span>
+        <span class="chip" onclick="setFilter('crop', this)">🌾 Crop</span>
+        <span class="chip" onclick="setFilter('ornamental', this)">🌸 Ornamental</span>
+        <span class="chip" onclick="setFilter('timber', this)">🪵 Timber</span>
+        <span class="chip" onclick="setFilter('aromatic', this)">🌺 Aromatic</span>
+      </div>
+      <div class="results-count" id="results-count"></div>
+    </div>
+
+    <div id="loading" class="loading-state" style="display:flex;">
+      <div class="loading-spinner"></div>
+      <span>Loading plants…</span>
+    </div>
+
+    <div class="plant-grid" id="plant-grid"></div>
+
+    <div class="no-results" id="no-results">
+      <i class="material-icons">search_off</i>
+      <p>No plants found.<br>Try a different search term or filter.</p>
+    </div>
+
+  </div>
+
+  <!-- DETAIL VIEW -->
+  <div id="view-detail">
+    <button class="back-btn" onclick="showList()">
+      <i class="material-icons">arrow_back</i> Back to Plants
+    </button>
+    <div id="detail-content"></div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+<!-- <script src="../../shared/messaging.js"></script> -->
+<script src="../../shared/nav.js"></script>
+<script src="../../shared/routes.js"></script>
+<script src="../../shared/base.js"></script>
+<script src="../../shared/userdd.js"></script>
+<script src="../../shared/notify.js"></script>
+<script src="skeleton.js"></script>
+<script src="tanimbase.js"></script>
+<script>
+  initNotifications({ fakeData: true });
+  Base.resolveAll();
+</script>
+</body>
+</html>

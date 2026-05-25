@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌾 Roots • Farmer Documents</title>
+  <style>
+    /* Nav is 60px tall — hardcoded here so it loads before any JS */
+    :root { --topbar-h: 60px; }
+    #roots-nav { position: fixed !important; top: 0; left: 0; right: 0; z-index: 200; }
+    .docs-layout { padding-top: 60px !important; }
+    .docs-sidebar { top: 60px !important; height: calc(100vh - 60px) !important; z-index: 100; }
+  </style>
+  <link rel="stylesheet" href="documentstyle.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../../shared/nav.css">
+  <link rel="stylesheet" href="../../shared/dropdowns.css">
+</head>
+<body>
+
+<!-- ── MAIN LAYOUT ── -->
+<div class="docs-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="docs-sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">KM</div>
+      <div>
+        <div class="sidebar-name">Karlo Mendoza</div>
+        <div class="sidebar-badge">
+          <i class="fas fa-circle-check"></i> Verified Farmer
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="sidebar-btn active" onclick="setView('all')" id="btn-all">
+        <i class="fas fa-layer-group"></i> All Documents
+        <span class="sidebar-count" id="cnt-all">0</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('title')" id="btn-title">
+        <i class="fas fa-map"></i> Land Titles
+        <span class="sidebar-count" id="cnt-title">0</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('permit')" id="btn-permit">
+        <i class="fas fa-id-card"></i> Permits
+        <span class="sidebar-count" id="cnt-permit">0</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('subsidy')" id="btn-subsidy">
+        <i class="fas fa-hand-holding-usd"></i> Subsidy Forms
+        <span class="sidebar-count" id="cnt-subsidy">0</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('insurance')" id="btn-insurance">
+        <i class="fas fa-shield-alt"></i> Insurance
+        <span class="sidebar-count" id="cnt-insurance">0</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('shared')" id="btn-shared">
+        <i class="fas fa-share-nodes"></i> Shared by Me
+        <span class="sidebar-count" id="cnt-shared">0</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('pending')" id="btn-pending">
+        <i class="fas fa-hourglass-half"></i> Pending Approval
+        <span class="sidebar-count pending-badge" id="cnt-pending">0</span>
+      </button>
+    </nav>
+
+    <div class="storage-card">
+      <div class="storage-label"><i class="fas fa-database"></i> Secure Storage</div>
+      <div class="storage-bar"><div class="storage-fill" style="width: 38%"></div></div>
+      <div class="storage-info"><span>3.8 MB used</span><span>10 MB free</span></div>
+    </div>
+
+    <button class="upload-trigger" onclick="openUploadModal()">
+      <i class="fas fa-cloud-upload-alt"></i> Upload Document
+    </button>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="docs-main">
+
+    <!-- HERO BANNER -->
+    <div class="docs-hero">
+      <div class="hero-text">
+        <div class="hero-eyebrow"><i class="fas fa-leaf"></i> Farmer Documents Module</div>
+        <h1 class="hero-title">Your documents,<br><em>always safe.</em></h1>
+        <p class="hero-sub">Land titles, permits, and government paperwork — securely stored, DA-verified, and under your control.</p>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hs-val" id="hs-total">0</div><div class="hs-lbl">Documents</div></div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat"><div class="hs-val approved-val" id="hs-approved">0</div><div class="hs-lbl">DA Approved</div></div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat"><div class="hs-val pending-val" id="hs-pending">0</div><div class="hs-lbl">Pending</div></div>
+      </div>
+    </div>
+
+    <!-- DA APPROVAL BANNER -->
+    <div class="da-banner hidden" id="daBanner">
+      <div class="da-banner-icon"><i class="fas fa-landmark"></i></div>
+      <div>
+        <strong>Department of Agriculture Review</strong>
+        <p>You have documents awaiting DA Region X confirmation. We'll notify you once reviewed.</p>
+      </div>
+      <button class="da-banner-btn" onclick="setView('pending')">View Pending <i class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="docs-toolbar">
+      <div class="toolbar-left">
+        <h2 class="section-title" id="sectionTitle">All Documents</h2>
+        <span class="doc-count" id="docCountLabel">Loading…</span>
+      </div>
+      <div class="toolbar-right">
+        <div class="toolbar-search">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Filter documents…" id="docFilter" oninput="filterDocs(this.value)">
+        </div>
+        <select class="sort-select" onchange="sortDocs(this.value)">
+          <option value="date-desc">Newest First</option>
+          <option value="date-asc">Oldest First</option>
+          <option value="name-asc">A → Z</option>
+          <option value="status">By Status</option>
+        </select>
+        <div class="view-toggle">
+          <button class="vt-btn active" id="gridBtn" onclick="setLayout('grid')" title="Grid view"><i class="fas fa-th"></i></button>
+          <button class="vt-btn" id="listBtn" onclick="setLayout('list')" title="List view"><i class="fas fa-list"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTS GRID -->
+    <div class="docs-grid" id="docsGrid"></div>
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state hidden" id="emptyState">
+      <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
+      <h3>No documents here</h3>
+      <p>Upload your first document to get started.</p>
+      <button class="btn-primary" onclick="openUploadModal()"><i class="fas fa-plus"></i> Upload Document</button>
+    </div>
+
+  </main>
+</div>
+
+<!-- ── UPLOAD MODAL ── -->
+<div class="modal-overlay hidden" id="uploadModal" onclick="if(event.target===this)closeUploadModal()">
+  <div class="modal-box upload-modal">
+    <div class="modal-head">
+      <h2><i class="fas fa-cloud-upload-alt"></i> Upload Document</h2>
+      <button class="modal-close" onclick="closeUploadModal()">&times;</button>
+    </div>
+    <div class="upload-dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()"
+         ondragover="event.preventDefault();this.classList.add('drag-over')"
+         ondragleave="this.classList.remove('drag-over')"
+         ondrop="handleDrop(event)">
+      <div class="dz-icon"><i class="fas fa-file-arrow-up"></i></div>
+      <p class="dz-text">Drag & drop or <span>browse files</span></p>
+      <p class="dz-hint">PDF, JPG, PNG — max 10 MB</p>
+      <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect(this.files)" style="display:none">
+    </div>
+    <div class="upload-preview" id="uploadPreview"></div>
+    <div class="upload-form">
+      <div class="uf-group">
+        <label>Document Title</label>
+        <input type="text" id="docTitle" placeholder="e.g. Land Title – Lot No. 4821-A">
+      </div>
+      <div class="uf-row">
+        <div class="uf-group">
+          <label>Category</label>
+          <select id="docCategory">
+            <option value="title">🗺️ Land Title</option>
+            <option value="permit">🪪 Permit</option>
+            <option value="subsidy">💰 Subsidy Form</option>
+            <option value="insurance">🛡️ Insurance</option>
+            <option value="other">📄 Other</option>
+          </select>
+        </div>
+        <div class="uf-group">
+          <label>Submit to DA?</label>
+          <select id="docSubmitDA">
+            <option value="yes">Yes — request approval</option>
+            <option value="no">No — store privately</option>
+          </select>
+        </div>
+      </div>
+      <div class="uf-group">
+        <label>Notes <span class="optional">(optional)</span></label>
+        <textarea id="docNotes" rows="2" placeholder="Any notes for DA reviewers…"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeUploadModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitUpload()"><i class="fas fa-upload"></i> Upload & Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── DOCUMENT DETAIL MODAL ── -->
+<div class="modal-overlay hidden" id="detailModal" onclick="if(event.target===this)closeDetailModal()">
+  <div class="modal-box detail-modal">
+    <div class="modal-head">
+      <h2 id="detailTitle">Document Title</h2>
+      <button class="modal-close" onclick="closeDetailModal()">&times;</button>
+    </div>
+    <div class="detail-body" id="detailBody"></div>
+  </div>
+</div>
+
+<!-- ── SHARE MODAL ── -->
+<div class="modal-overlay hidden" id="shareModal" onclick="if(event.target===this)closeShareModal()">
+  <div class="modal-box share-modal">
+    <div class="modal-head">
+      <h2><i class="fas fa-share-nodes"></i> Share Document</h2>
+      <button class="modal-close" onclick="closeShareModal()">&times;</button>
+    </div>
+    <div class="share-body">
+      <p class="share-desc">Control who can view <strong id="shareDocName"></strong>.</p>
+      <div class="share-options">
+        <label class="share-opt">
+          <input type="radio" name="shareScope" value="da" checked>
+          <div class="share-opt-card">
+            <i class="fas fa-landmark"></i>
+            <strong>DA Office Only</strong>
+            <small>For approval and government aid</small>
+          </div>
+        </label>
+        <label class="share-opt">
+          <input type="radio" name="shareScope" value="link">
+          <div class="share-opt-card">
+            <i class="fas fa-link"></i>
+            <strong>Secure Link</strong>
+            <small>Generate a time-limited link</small>
+          </div>
+        </label>
+        <label class="share-opt">
+          <input type="radio" name="shareScope" value="private">
+          <div class="share-opt-card">
+            <i class="fas fa-lock"></i>
+            <strong>Private</strong>
+            <small>Only you can see this</small>
+          </div>
+        </label>
+      </div>
+      <div class="share-link-box hidden" id="shareLinkBox">
+        <input type="text" id="shareLinkInput" readonly value="https://roots.da.gov.ph/share/abc123">
+        <button onclick="copyShareLink()"><i class="fas fa-copy"></i></button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeShareModal()">Cancel</button>
+      <button class="btn-primary" onclick="confirmShare()"><i class="fas fa-share"></i> Confirm Sharing</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast hidden" id="toast"></div>
+
+<script src="../../shared/nav.js"></script>
+<script src="../../shared/routes.js"></script>
+<script src="../../shared/base.js"></script>
+<script src="../../shared/userdd.js"></script>
+<script src="../../shared/messaging.js"></script>
+<script src="../../shared/notify.js"></script>
+<script src="documentscript.js"></script>
+<script>
+  initNotifications({ fakeData: true });
+  Base.resolveAll();
+</script>
+</body>
+</html>

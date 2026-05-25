@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐄 Roots • Livestock Module</title>
+  <link rel="stylesheet" href="css/livestock.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../../shared/dropdowns.css">
+  <link rel="stylesheet" href="../../shared/nav.css">
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<main class="content">
+  <div class="module-header">
+    <div class="module-header-left">
+      <h1><i class="fas fa-paw"></i> Livestock</h1>
+      <p class="subtitle">Browse animals from verified farmers in Oroquieta — save favorites or add to cart</p>
+    </div>
+    <div class="module-header-actions" id="buyerHeaderActions">
+      <button type="button" class="module-action-btn buyer-tool-btn" onclick="openCartModal()" title="Cart">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Cart</span>
+        <span class="action-badge hidden" id="cartBadge">0</span>
+      </button>
+      <button type="button" class="module-action-btn buyer-tool-btn" onclick="openSavedModal()" title="Saved listings">
+        <i class="fas fa-heart"></i>
+        <span>Saved</span>
+        <span class="action-badge hidden" id="savedBadge">0</span>
+      </button>
+    </div>
+    <div class="module-header-actions hidden" id="sellerHeaderActions">
+      <button type="button" class="module-action-btn module-action-outline" onclick="setUserMode('buyer')" title="Browse marketplace">
+        <i class="fas fa-store"></i>
+        <span>Browse</span>
+      </button>
+      <button type="button" class="module-action-btn" onclick="openMyListings()" title="My Listings">
+        <i class="fas fa-list-ul"></i>
+        <span>My Listings</span>
+      </button>
+      <button type="button" class="add-listing-inline-btn" onclick="openAddListingModal()" title="List a new animal">
+        <i class="fas fa-plus-circle"></i>
+        <span>List Animal</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="farmer-cta-banner" id="farmerCtaBanner">
+    <div class="farmer-cta-text">
+      <strong>Want to list your own animals?</strong>
+      <span>Register as a farmer to post listings, manage orders, and reach buyers in Oroquieta.</span>
+    </div>
+    <button type="button" class="farmer-cta-btn" onclick="openFarmerOnboarding()">
+      <i class="fas fa-tractor"></i> Register as Farmer
+    </button>
+  </div>
+
+  <div class="search-filter-bar">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Search animals, breeds, sellers…" oninput="onSearch()">
+    </div>
+    <div class="filter-rows" id="filterChips">
+      <div class="filter-row">
+        <span class="filter-row-label">Listing type</span>
+        <div class="filter-chips">
+          <button type="button" class="filter-chip" data-kind="listing" data-filter="sell" onclick="toggleListingFilter('sell', this)">For Sale</button>
+          <button type="button" class="filter-chip" data-kind="listing" data-filter="trade" onclick="toggleListingFilter('trade', this)">For Trade</button>
+          <button type="button" class="filter-chip" data-kind="listing" data-filter="service" onclick="toggleListingFilter('service', this)">For Stud / Service</button>
+          <button type="button" class="filter-chip" data-kind="listing" data-filter="da" onclick="toggleListingFilter('da', this)">DA Verified</button>
+        </div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-row-label">Animal</span>
+        <div class="filter-chips">
+          <button type="button" class="filter-chip active" data-kind="type" data-filter="all" onclick="setTypeFilter('all', this)"><i class="fas fa-border-all"></i> All</button>
+          <button type="button" class="filter-chip" data-kind="type" data-filter="cattle" onclick="setTypeFilter('cattle', this)">🐄 Cattle</button>
+          <button type="button" class="filter-chip" data-kind="type" data-filter="hog" onclick="setTypeFilter('hog', this)">🐖 Hogs</button>
+          <button type="button" class="filter-chip" data-kind="type" data-filter="goat" onclick="setTypeFilter('goat', this)">🐐 Goats</button>
+          <button type="button" class="filter-chip" data-kind="type" data-filter="poultry" onclick="setTypeFilter('poultry', this)">🐓 Poultry</button>
+          <button type="button" class="filter-chip" data-kind="type" data-filter="carabao" onclick="setTypeFilter('carabao', this)">🦬 Carabao</button>
+          <button type="button" class="filter-chip" data-kind="type" data-filter="other" onclick="setTypeFilter('other', this)">🐇 Other</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sort-row">
+    <span class="results-count" id="resultsCount"></span>
+    <div class="sort-group">
+      <label for="sortSelect"><i class="fas fa-sort"></i> Sort:</label>
+      <select id="sortSelect" onchange="onSort()">
+        <option value="newest">Newest First</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="rating">Top Rated</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="livestock-layout">
+    <div class="listings-col-main">
+      <div class="listings-grid" id="listingsGrid"></div>
+      <div class="empty-state hidden" id="emptyState">
+        <div class="empty-icon">🐄</div>
+        <p>No listings found</p>
+        <small>Try a different search or category</small>
+      </div>
+    </div>
+    <div class="listings-col-side">
+      <div class="price-panel">
+        <h3><i class="fas fa-tags"></i> Current Market Prices</h3>
+        <p class="price-source"><i class="fas fa-info-circle"></i> Computed from active Oroquieta listings (per kg live weight)</p>
+        <div id="priceBoard"></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="fab-add hidden" id="fabAddListing" onclick="openAddListingModal()" title="List animal">
+    <i class="fas fa-plus"></i>
+  </button>
+</main>
+
+<!-- ===== ADD / EDIT LISTING MODAL ===== -->
+<div class="modal hidden" id="addListingModal">
+  <div class="modal-content listing-form-modal">
+    <button onclick="closeAddListingModal()" class="close-modal">✕</button>
+    <h3 id="listingModalTitle"><i class="fas fa-plus-circle listing-form-icon"></i> Post Animal Listing</h3>
+
+    <div class="listing-form-grid">
+
+    <div class="listing-form-column">
+    <section class="listing-form-section listing-form-section-first">
+      <h4 class="listing-form-section-title">Basic information</h4>
+      <div class="form-group">
+        <label>Listing Title <span style="color:var(--livestock-red)">*</span></label>
+        <input type="text" id="listingTitle" class="listing-title-input" placeholder="e.g. 3 Native Hogs – Ready for Trade">
+      </div>
+
+      <div class="form-row form-row-compact">
+      <div class="form-group form-group-compact">
+        <label>Animal Type <span style="color:var(--livestock-red)">*</span></label>
+        <select id="animalType" onchange="onAnimalTypeChange()">
+          <option value="">-- Select --</option>
+          <option value="cattle">🐄 Cattle</option>
+          <option value="hog">🐖 Hog</option>
+          <option value="goat">🐐 Goat</option>
+          <option value="poultry">🐓 Poultry</option>
+          <option value="carabao">🦬 Carabao</option>
+          <option value="other">🐇 Other</option>
+        </select>
+      </div>
+      <div class="form-group form-group-compact">
+        <label>Breed <span style="color:#aaa;font-weight:400">(opt.)</span></label>
+        <input type="text" id="animalBreed" placeholder="Native, Brahman…">
+      </div>
+    </div>
+
+      <div class="form-group hidden" id="customAnimalGroup">
+        <label>What kind of animal? <span style="color:var(--livestock-red)">*</span></label>
+        <input type="text" id="customAnimalName" placeholder="e.g. Rabbit, Quail…">
+      </div>
+    </section>
+
+    <section class="listing-form-section">
+      <h4 class="listing-form-section-title">Animal details</h4>
+      <div class="form-row">
+      <div class="form-group">
+        <label>Quantity <span style="color:var(--livestock-red)">*</span></label>
+        <div class="qty-stepper-row">
+          <div class="qty-stepper">
+            <button type="button" class="qty-btn" onclick="stepQty(-1)" title="Decrease">−</button>
+            <input type="number" id="animalCount" min="1" value="1" placeholder="1" class="qty-input" oninput="clampQty()">
+            <button type="button" class="qty-btn" onclick="stepQty(1)" title="Increase">+</button>
+          </div>
+          <select id="animalCountUnit" class="unit-select qty-unit">
+            <option value="head">head</option>
+            <option value="whole animal">whole animal</option>
+            <option value="pair">pair</option>
+            <option value="feet">feet</option>
+            <option value="legs">legs</option>
+            <option value="wings">wings</option>
+            <option value="pieces">pieces</option>
+            <option value="kg">kg (live weight)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Approx. Weight (kg)</label>
+        <input type="number" id="animalWeight" min="1" placeholder="e.g. 80">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Age <span style="color:#aaa;font-weight:400;font-size:11px">(e.g. 7 months + 8 days)</span></label>
+        <div class="age-compound-row">
+          <div class="input-unit-row age-primary">
+            <input type="number" id="animalAgeNum" min="0" placeholder="e.g. 7">
+            <select id="animalAgeUnit" class="unit-select">
+              <option value="days">day/s</option>
+              <option value="months" selected>month/s</option>
+              <option value="years">year/s</option>
+            </select>
+          </div>
+          <span class="age-plus-sep">+</span>
+          <div class="input-unit-row age-secondary">
+            <input type="number" id="animalAgeNum2" min="0" placeholder="0" style="width:54px">
+            <select id="animalAgeUnit2" class="unit-select">
+              <option value="days" selected>day/s</option>
+              <option value="months">month/s</option>
+            </select>
+          </div>
+        </div>
+        <small class="age-hint">Leave second part as 0 if not needed</small>
+      </div>
+      <div class="form-group">
+        <label>Price (₱) <span style="color:var(--livestock-red)">*</span></label>
+        <input type="number" id="listingPrice" min="0" placeholder="e.g. 5000">
+      </div>
+    </div>
+    </section>
+    </div><!-- .listing-form-column left -->
+
+    <div class="listing-form-column">
+    <section class="listing-form-section listing-form-section-first">
+      <h4 class="listing-form-section-title">Listing options</h4>
+      <div class="form-row form-row-compact">
+      <div class="form-group form-group-compact">
+        <label>Listing Type</label>
+        <select id="listingType">
+          <option value="sell">💰 For Sale</option>
+          <option value="trade">🔄 For Trade</option>
+          <option value="both">💰🔄 Sale or Trade</option>
+          <option value="service">🐂 Stud/Service</option>
+        </select>
+      </div>
+      <div class="form-group form-group-compact">
+        <label>Vaccination</label>
+        <select id="vaccineStatus">
+          <option value="complete">✅ Full</option>
+          <option value="partial">⚠️ Partial</option>
+          <option value="none">❌ None</option>
+          <option value="unknown">❓ Unknown</option>
+        </select>
+      </div>
+    </div>
+    </section>
+
+    <section class="listing-form-section">
+      <h4 class="listing-form-section-title">Pickup location</h4>
+      <div class="form-group">
+      <label>Location / Barangay <span style="color:var(--livestock-red)">*</span></label>
+      <div class="location-row">
+        <select id="listingLocation">
+          <option value="">-- Select barangay --</option>
+        </select>
+        <input type="text" id="listingPurok" placeholder="Purok no. (e.g. Purok 3)" class="purok-input">
+      </div>
+      <input type="text" id="listingLandmark" placeholder="Landmark (e.g. near the elementary school, beside the chapel…)" class="landmark-input" style="margin-top:8px">
+      </div>
+    </section>
+
+    <section class="listing-form-section">
+      <h4 class="listing-form-section-title">Description</h4>
+      <div class="form-group form-group-notes">
+        <label>Notes <span style="color:#aaa;font-weight:400">(optional)</span></label>
+        <textarea id="listingNotes" placeholder="Health history, feeding habits, special notes…"></textarea>
+      </div>
+    </section>
+    </div><!-- .listing-form-column right -->
+
+    <section class="listing-form-section listing-form-col-span listing-form-section-last">
+      <h4 class="listing-form-section-title">Photos</h4>
+      <div class="form-group">
+      <label>Cover Photo <span style="color:var(--livestock-red)">*</span> <span style="color:#aaa;font-weight:400">(required — up to 5 photos)</span></label>
+      <div class="cover-photo-dropzone" id="coverPhotoDropzone" onclick="document.getElementById('photoFileInput').click()">
+        <div class="cover-photo-placeholder" id="coverPhotoPlaceholder">
+          <i class="fas fa-camera-retro"></i>
+          <span>Tap to upload a cover photo</span>
+          <small>First photo will appear as the listing cover</small>
+        </div>
+        <img id="coverPhotoPreview" src="" alt="Cover photo" class="cover-photo-img hidden">
+        <div class="cover-badge hidden" id="coverBadge"><i class="fas fa-star"></i> Cover</div>
+      </div>
+      <input type="file" id="photoFileInput" accept="image/*" multiple style="display:none" onchange="handlePhotoSelect(event)">
+      <div class="photo-preview-row" id="photoPreviewRow"></div>
+      <p class="photo-hint" id="photoHint" style="display:none">
+        <i class="fas fa-info-circle"></i> Tap a thumbnail to set it as the cover photo
+      </p>
+      </div>
+    </section>
+
+    </div><!-- .listing-form-grid -->
+
+    <div class="da-verified-notice">
+      <i class="fas fa-shield-alt"></i>
+      <strong>DA Verified Seller:</strong> Your listing will display a DA Verified badge since your account is verified.
+    </div>
+
+    <input type="hidden" id="editingListingId" value="">
+
+    <div class="form-actions">
+      <button onclick="closeAddListingModal()" class="btn secondary">Cancel</button>
+      <button onclick="submitListing()" class="btn primary" id="submitListingBtn">
+        <i class="fas fa-check-circle"></i> Post Listing
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LISTING DETAIL (product page) ===== -->
+<div class="modal hidden" id="listingDetailModal">
+  <div class="modal-content listing-detail-modal">
+    <button type="button" onclick="closeListingDetailModal()" class="close-modal" aria-label="Close">✕</button>
+    <div id="listingDetailContent"></div>
+  </div>
+</div>
+
+<!-- ===== CART MODAL ===== -->
+<div class="modal hidden" id="cartModal">
+  <div class="modal-content buyer-panel-modal">
+    <button type="button" onclick="closeCartModal()" class="close-modal">✕</button>
+    <h3><i class="fas fa-shopping-cart" style="color:var(--livestock-green)"></i> My Cart</h3>
+    <p class="buyer-panel-hint">Tick the animals you want, then continue to payment (COD).</p>
+    <div class="cart-toolbar hidden" id="cartToolbar">
+      <label class="cart-select-all-label">
+        <input type="checkbox" id="cartSelectAll" onchange="toggleCartSelectAll(this.checked)" aria-label="Select all">
+        <span>Select all</span>
+      </label>
+      <span class="cart-selected-count" id="cartSelectedCount"></span>
+    </div>
+    <div id="cartItemsList" class="buyer-items-list cart-items-list"></div>
+    <div class="empty-state hidden" id="cartEmpty">
+      <div class="empty-icon">🛒</div>
+      <p>Your cart is empty</p>
+      <small>Open a listing, then tap <strong>Add to Cart</strong> or <strong>Buy Now</strong></small>
+    </div>
+    <div class="buyer-panel-footer hidden" id="cartFooter">
+      <div class="buyer-panel-total">
+        <span>Total (<span id="cartSelectedLabel">0 selected</span>)</span>
+        <strong id="cartTotal">₱0</strong>
+      </div>
+      <button type="button" class="btn primary" id="cartProceedBtn" onclick="proceedWithSelectedCart()" disabled>
+        <i class="fas fa-money-bill-wave"></i> Continue to payment
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SAVED / LIKES MODAL ===== -->
+<div class="modal hidden" id="savedModal">
+  <div class="modal-content buyer-panel-modal">
+    <button type="button" onclick="closeSavedModal()" class="close-modal">✕</button>
+    <h3><i class="fas fa-heart" style="color:var(--livestock-red)"></i> Saved Listings</h3>
+    <p class="buyer-panel-hint">Listings you liked — tap the heart on any animal to save it here.</p>
+    <div id="savedItemsList" class="buyer-items-list"></div>
+    <div class="empty-state hidden" id="savedEmpty">
+      <div class="empty-icon">❤️</div>
+      <p>No saved listings yet</p>
+      <small>Tap the heart icon on a listing to save it</small>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FARMER ONBOARDING: INTRO ===== -->
+<div class="modal hidden" id="farmerIntroModal">
+  <div class="modal-content farmer-onboard-modal">
+    <button type="button" onclick="closeFarmerOnboarding()" class="close-modal">✕</button>
+    <div class="farmer-onboard-hero">
+      <i class="fas fa-tractor"></i>
+      <h3>Roots Livestock for Farmers</h3>
+      <p>List cattle, hogs, poultry, and more — reach buyers across Oroquieta City.</p>
+    </div>
+    <p class="farmer-onboard-msg">To get started, register as a farmer by providing your farm and contact details. You will need to sign in again to verify your account.</p>
+    <button type="button" class="btn primary farmer-onboard-primary" onclick="openFarmerLoginStep()">
+      Start Registration
+    </button>
+  </div>
+</div>
+
+<!-- ===== FARMER ONBOARDING: RE-LOGIN ===== -->
+<div class="modal hidden" id="farmerLoginModal">
+  <div class="modal-content farmer-onboard-modal">
+    <button type="button" onclick="backToFarmerIntro()" class="close-modal">✕</button>
+    <h3><i class="fas fa-user-lock" style="color:var(--livestock-green)"></i> Sign In to Continue</h3>
+    <p class="farmer-onboard-msg">For your security, please sign in again before registering as a farmer.</p>
+
+    <div class="farmer-login-tabs" role="tablist" aria-label="Sign in method">
+      <button type="button" role="tab" id="farmerLoginTabPhone" class="farmer-login-tab active" aria-selected="true" aria-controls="farmerLoginPanelPhone" onclick="setFarmerLoginTab('phone')">
+        <i class="fas fa-mobile-alt"></i> Phone
+      </button>
+      <button type="button" role="tab" id="farmerLoginTabAccount" class="farmer-login-tab" aria-selected="false" aria-controls="farmerLoginPanelAccount" onclick="setFarmerLoginTab('account')">
+        <i class="fas fa-envelope"></i> Email / Username
+      </button>
+    </div>
+
+    <div id="farmerLoginPanelPhone" class="farmer-login-panel" role="tabpanel" aria-labelledby="farmerLoginTabPhone">
+      <div class="form-group">
+        <label>Mobile number</label>
+        <input type="tel" id="farmerLoginPhone" data-ph-phone="true" value="+63 " placeholder="917 555 0123" inputmode="tel" autocomplete="tel" onfocus="ensurePhilippinePhonePrefix(this)" oninput="formatPhilippineMobileInput(this)">
+        <small class="field-hint">+63 is pre-filled — enter your 10-digit mobile number (9xx xxx xxxx).</small>
+      </div>
+    </div>
+
+    <div id="farmerLoginPanelAccount" class="farmer-login-panel hidden" role="tabpanel" aria-labelledby="farmerLoginTabAccount">
+      <div class="form-group">
+        <label>Email or username</label>
+        <input type="text" id="farmerLoginAccount" placeholder="your.email@example.com or username" autocomplete="username">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="farmerLoginPassword" placeholder="Enter your password" autocomplete="current-password">
+    </div>
+    <button type="button" class="btn primary farmer-onboard-primary" onclick="submitFarmerLogin()">
+      Sign In &amp; Continue
+    </button>
+    <p class="farmer-onboard-footnote"><i class="fas fa-info-circle"></i> Demo: any valid PH mobile, email, or username; password min. 4 characters.</p>
+  </div>
+</div>
+
+<!-- ===== FARMER ONBOARDING: REGISTRATION (2 steps) ===== -->
+<div class="modal hidden" id="farmerRegModal">
+  <div class="modal-content farmer-reg-modal">
+    <button type="button" onclick="closeFarmerOnboarding()" class="close-modal">✕</button>
+    <div class="farmer-reg-header">
+      <h3 id="farmerRegStepTitle">Farm Information</h3>
+      <button type="button" class="farmer-reg-save-link" onclick="saveFarmerRegDraft()" title="Save your progress and continue later">Save draft</button>
+    </div>
+    <div class="farmer-reg-stepper">
+      <div class="farmer-reg-step active" id="farmerStep1Indicator"><span>1</span> Farm Information</div>
+      <div class="farmer-reg-step" id="farmerStep2Indicator"><span>2</span> Contact &amp; Location</div>
+    </div>
+
+    <div id="farmerRegStep1">
+      <div class="form-group">
+        <label>Farm / Listing Name <span class="req">*</span></label>
+        <input type="text" id="farmShopName" maxlength="30" placeholder="e.g. Mario's Native Hogs">
+        <small class="char-counter"><span id="farmShopNameCount">0</span>/30</small>
+        <small class="field-hint">You’ll add pickup location and contact details on the next step.</small>
+      </div>
+    </div>
+
+    <div id="farmerRegStep2" class="hidden">
+      <div class="form-group">
+        <label>Contact Phone <span class="req">*</span></label>
+        <input type="tel" id="farmPhone" data-ph-phone="true" value="+63 " placeholder="917 555 0123" inputmode="tel" autocomplete="tel" onfocus="ensurePhilippinePhonePrefix(this)" oninput="formatPhilippineMobileInput(this)">
+        <small class="field-hint">+63 is pre-filled — enter your 10-digit mobile number (9xx xxx xxxx). This is how buyers and DA staff reach you.</small>
+      </div>
+      <div class="form-group">
+        <label>Contact Email <span class="optional">(optional)</span></label>
+        <input type="email" id="farmEmail" placeholder="Leave blank if you don't have email">
+        <small class="field-hint">No email? That's fine — your mobile number is enough.</small>
+      </div>
+
+      <h4 class="farmer-reg-subsection-title">Pickup location</h4>
+      <div class="form-group farm-location-group">
+        <div class="farm-location-toolbar">
+          <button type="button" class="btn secondary farm-use-location-btn" id="farmUseLocationBtn" onclick="useFarmCurrentLocation()">
+            <i class="fas fa-location-crosshairs"></i> Use current location
+          </button>
+          <span class="farm-location-status" id="farmLocationStatus" aria-live="polite"></span>
+        </div>
+        <!-- Map module mount point — other team integrates via #farmMapModule -->
+        <div
+          class="farm-map-placeholder"
+          id="farmMapModule"
+          data-map-integration="pending"
+          data-integration-hook="FarmMapModule.mount('#farmMapModule')"
+          aria-label="Map module placeholder"
+        >
+          <div class="farm-map-placeholder-inner" id="farmMapPlaceholderInner">
+            <i class="fas fa-map-marked-alt"></i>
+            <p>Map preview</p>
+            <small>Interactive map module will load here (integration pending).</small>
+          </div>
+        </div>
+        <input type="hidden" id="farmPickupLat" value="">
+        <input type="hidden" id="farmPickupLng" value="">
+      </div>
+      <div class="form-group">
+        <label>Pickup Address (Barangay) <span class="req">*</span></label>
+        <select id="farmPickupBarangay">
+          <option value="">-- Select barangay --</option>
+        </select>
+        <small class="field-hint">Auto-filled when you use current location, if detected in Oroquieta City.</small>
+      </div>
+      <div class="form-group">
+        <label>Street / Landmark</label>
+        <input type="text" id="farmPickupStreet" placeholder="e.g. V. Zarraga Street, Purok 3">
+      </div>
+      <div class="form-group">
+        <label>DA Farmer ID <span class="optional">(optional)</span></label>
+        <input type="text" id="farmDaId" placeholder="If you have a DA registration number">
+      </div>
+      <div class="farmer-terms-check">
+        <input type="checkbox" id="farmTermsAgree" aria-describedby="farmTermsDesc">
+        <span id="farmTermsDesc">I agree to the <a href="#" onclick="openTermsModal(event)">Terms of Use</a> and <a href="#" onclick="openPrivacyModal(event)">Data Privacy Policy</a> of <strong>Roots Livestock</strong> (Oroquieta City).</span>
+      </div>
+    </div>
+
+    <div class="farmer-reg-actions">
+      <button type="button" class="btn secondary" id="farmerRegBackBtn" onclick="farmerRegBack()">Back</button>
+      <button type="button" class="btn primary" id="farmerRegNextBtn" onclick="farmerRegNext()">Next</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TERMS OF USE ===== -->
+<div class="modal hidden" id="termsModal" role="dialog" aria-labelledby="termsModalTitle">
+  <div class="modal-content legal-modal">
+    <button type="button" onclick="closeLegalModals()" class="close-modal" aria-label="Close">✕</button>
+    <h3 id="termsModalTitle"><i class="fas fa-file-contract" style="color:var(--livestock-green)"></i> Terms of Use</h3>
+    <p class="legal-updated">Last updated: May 2026 · Roots Livestock Module (Oroquieta City)</p>
+    <div class="legal-body">
+      <p>Welcome to <strong>Roots Livestock</strong>, part of the Roots platform for farmers and buyers in Oroquieta City, Misamis Occidental. By registering as a farmer, browsing listings, or using buy/cart features, you agree to these Terms.</p>
+
+      <h4>1. Who may use this module</h4>
+      <ul>
+        <li><strong>Buyers</strong> may browse, save listings, add items to cart, and arrange purchase (including Cash on Delivery) with sellers.</li>
+        <li><strong>Farmers (sellers)</strong> must complete registration and, where required, <strong>Department of Agriculture (DA)</strong> verification before listing animals.</li>
+        <li>You must provide accurate information and use the service only for lawful livestock trade within Oroquieta and surrounding areas served by the platform.</li>
+      </ul>
+
+      <h4>2. Farmer registration</h4>
+      <ul>
+        <li>You agree that farm name, pickup address (barangay), contact details, and optional DA Farmer ID are truthful.</li>
+        <li>DA staff may review your application. A <strong>DA Verified</strong> badge is granted only after official approval—not automatically upon signup.</li>
+        <li>False identity, fake listings, or misuse of verification may lead to suspension (see Section 7).</li>
+      </ul>
+
+      <h4>3. Listings and content</h4>
+      <ul>
+        <li>Listings must describe real animals you own or are authorized to sell, trade, or offer for stud/service.</li>
+        <li>Photos, price, quantity, vaccination status, breed, age, and location must be substantially accurate.</li>
+        <li>You must not post stolen animals, endangered species without permits, misleading health claims, or illegal products.</li>
+        <li>Roots may remove or hide listings that violate these rules or receive valid reports.</li>
+      </ul>
+
+      <h4>4. Transactions and payments</h4>
+      <ul>
+        <li>Many sales use <strong>Cash on Delivery (COD)</strong> or meet-up payment agreed between buyer and seller.</li>
+        <li>Online payment (e.g. GCash/Maya) may be offered through a separate Payments module when available; Roots is not a bank and does not hold buyer funds unless that module explicitly states otherwise.</li>
+        <li>Disputes on price, delivery, animal health, or refunds are primarily between buyer and seller; DA or platform admins may assist in mediation where the full Roots system supports it.</li>
+      </ul>
+
+      <h4>5. Buyer and seller conduct</h4>
+      <ul>
+        <li>No harassment, spam, off-platform scams, or sharing others’ personal data without consent.</li>
+        <li>Do not circumvent verification to list as another person or from a suspended account.</li>
+        <li>Ratings and reviews must be honest and related to actual transactions.</li>
+      </ul>
+
+      <h4>6. Intellectual property</h4>
+      <p>You keep ownership of photos and text you upload. You grant Roots a non-exclusive license to display that content on the platform for marketplace purposes. Do not upload images you do not have rights to use.</p>
+
+      <h4>7. Suspension and termination</h4>
+      <p>DA administrators or platform operators may suspend farmers, remove listings, or revoke verification for fraud, repeated complaints, or breach of these Terms. You may stop using the service at any time; local data in your browser may remain until you clear it.</p>
+
+      <h4>8. Disclaimer</h4>
+      <p>Roots Livestock is provided as a school/community project tool. Animal health, weight, and legal compliance (e.g. transport permits) remain your responsibility. The platform does not guarantee sale, purchase, or fitness of any animal.</p>
+
+      <h4>9. Changes</h4>
+      <p>We may update these Terms. Continued use after notice (in-app or via your group coordinator) means you accept the updated version.</p>
+
+      <h4>10. Contact</h4>
+      <p>Questions about these Terms: contact your <strong>Roots Livestock</strong> team lead or the <strong>DA Oroquieta City</strong> office supporting this module.</p>
+    </div>
+    <button type="button" class="btn primary legal-close-btn" onclick="closeLegalModals()">Close</button>
+  </div>
+</div>
+
+<!-- ===== DATA PRIVACY POLICY ===== -->
+<div class="modal hidden" id="privacyPolicyModal" role="dialog" aria-labelledby="privacyModalTitle">
+  <div class="modal-content legal-modal">
+    <button type="button" onclick="closeLegalModals()" class="close-modal" aria-label="Close">✕</button>
+    <h3 id="privacyModalTitle"><i class="fas fa-user-shield" style="color:var(--livestock-green)"></i> Data Privacy Policy</h3>
+    <p class="legal-updated">Last updated: May 2026 · Complies with the Philippine Data Privacy Act of 2012 (RA 10173) in spirit</p>
+    <div class="legal-body">
+      <p>This policy explains how the <strong>Roots Livestock</strong> module collects, uses, and protects personal information for users in <strong>Oroquieta City</strong>.</p>
+
+      <h4>1. Personal data we collect</h4>
+      <ul>
+        <li><strong>All users (browser/device):</strong> listings you view, cart/saved preferences stored locally, and technical logs if the server is enabled.</li>
+        <li><strong>Farmers registering:</strong> farm/listing name, mobile phone number, pickup barangay and street/landmark, optional email, optional DA Farmer ID, and profile/listing photos you upload.</li>
+        <li><strong>Buyers:</strong> cart and saved listings; order details when you proceed to payment (listing, quantity, seller name).</li>
+        <li><strong>Transactions:</strong> order history, messages, and ratings when those features are connected to the database.</li>
+      </ul>
+
+      <h4>2. Why we use your data</h4>
+      <ul>
+        <li>To operate the marketplace (show listings, cart, checkout, notifications).</li>
+        <li>To verify farmers with <strong>DA Oroquieta</strong> and display trust badges.</li>
+        <li>To connect buyers and sellers for COD or future digital payments.</li>
+        <li>To improve safety, prevent fraud, and produce aggregated statistics (e.g. market prices) without identifying you in public reports.</li>
+      </ul>
+
+      <h4>3. Legal basis</h4>
+      <p>We process data based on your <strong>consent</strong> (checkbox at registration), <strong>contract</strong> (providing the service you asked for), and <strong>legitimate interest</strong> (security, fraud prevention, DA regulatory support for farmers).</p>
+
+      <h4>4. Who we share data with</h4>
+      <ul>
+        <li><strong>Other users:</strong> buyers see seller name, location area, and listing details; sellers see buyer contact only when needed for an order (as implemented in Payments/orders).</li>
+        <li><strong>DA administrators:</strong> registration and verification data for farmer approval, suspension, and audits.</li>
+        <li><strong>Platform operators / developers:</strong> STEM project team and hosting provider, under confidentiality for system maintenance.</li>
+        <li>We do <strong>not</strong> sell your personal data to advertisers.</li>
+      </ul>
+
+      <h4>5. Storage and security</h4>
+      <ul>
+        <li>Data may be stored in the app database (MySQL) and temporarily in your browser (localStorage) for cart, saved items, and drafts.</li>
+        <li>We use reasonable technical measures (access control, HTTPS when deployed on a proper server). No system is 100% secure—avoid sharing passwords on shared devices.</li>
+      </ul>
+
+      <h4>6. How long we keep data</h4>
+      <p>Account and listing data are kept while your account is active and as required for DA records, disputes, or law. You may request deletion subject to legal retention rules.</p>
+
+      <h4>7. Your rights (RA 10173)</h4>
+      <p>You may request <strong>access</strong>, <strong>correction</strong>, <strong>erasure</strong>, or <strong>objection</strong> to certain processing by contacting the DA office or Roots team. We will respond within a reasonable time required by law.</p>
+
+      <h4>8. Children</h4>
+      <p>This service is intended for adults (18+) or minors with parent/guardian consent for farm activities. We do not knowingly collect data from young children without consent.</p>
+
+      <h4>9. Links to other modules</h4>
+      <p>Roots includes separate modules (Videos, Payments, Registration, etc.). Each may have its own policy when you leave Livestock.</p>
+
+      <h4>10. Updates</h4>
+      <p>We may revise this policy. Material changes will be shown in-app; continued use after update means you have read the new version.</p>
+
+      <h4>11. Contact</h4>
+      <p>Privacy questions or requests: <strong>DA Oroquieta City</strong> (Livestock program) or your <strong>Roots Livestock</strong> module coordinator.</p>
+    </div>
+    <button type="button" class="btn primary legal-close-btn" onclick="closeLegalModals()">Close</button>
+  </div>
+</div>
+
+<!-- ===== MY LISTINGS MODAL ===== -->
+<div class="modal hidden" id="myListingsModal">
+  <div class="modal-content">
+    <button onclick="closeMyListings()" class="close-modal">✕</button>
+    <h3><i class="fas fa-list-ul" style="color:var(--livestock-green)"></i> My Posted Listings</h3>
+    <p style="color:#888;font-size:13px;margin-bottom:16px">Manage and edit your animal listings below.</p>
+    <div id="myListingsGrid" class="my-listings-grid"></div>
+    <div class="empty-state hidden" id="myListingsEmpty">
+      <div class="empty-icon">📋</div>
+      <p>You haven't posted any listings yet</p>
+      <small>Tap "List Animal" to get started</small>
+      <br><br>
+      <button class="btn primary" onclick="closeMyListings(); openAddListingModal();">
+        <i class="fas fa-plus-circle"></i> List Animal
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODULE SWITCHER ===== -->
+<div class="module-switcher-overlay hidden" id="moduleSwitcherOverlay">
+  <div class="module-switcher-box">
+    <button class="module-switcher-close" onclick="closeModuleSwitcher()"><i class="fas fa-times"></i></button>
+    <div class="module-switcher-icon" id="moduleSwitcherIcon"></div>
+    <div class="module-switcher-name" id="moduleSwitcherName"></div>
+    <div class="module-switcher-msg" id="moduleSwitcherMsg"></div>
+    <button class="module-switcher-btn" onclick="closeModuleSwitcher()">Stay on Livestock</button>
+  </div>
+</div>
+
+  <script src="../../shared/nav.js"></script>
+  <script src="../../shared/routes.js"></script>
+  <script src="../../shared/base.js"></script>
+  <script src="../../shared/userdd.js"></script>
+  <script src="../../shared/notify.js"></script>
+  <script>
+    initNotifications({ fakeData: true });
+    Base.resolveAll();
+  </script>
+  <!-- Shared (load order matters) -->
+  <script src="js/shared/config.js"></script>
+  <script src="js/shared/barangays.js"></script>
+  <script src="js/shared/legal.js"></script>
+  <script src="js/shared/state.js"></script>
+  <script src="js/shared/storage.js"></script>
+  <script src="js/shared/toast.js"></script>
+  <script src="js/shared/phone-ph.js"></script>
+  <script src="js/shared/farm-location.js"></script>
+  <script src="js/shared/market-prices.js"></script>
+  <script src="js/shared/api.js"></script>
+  <script src="js/shared/ui-shell.js"></script>
+  <script src="js/marketplace/notifications.js"></script>
+  <script src="js/marketplace/browse.js"></script>
+  <!-- Buyer -->
+  <script src="js/buyer/mode.js"></script>
+  <!-- Seller (UI labels still say "farmer") -->
+  <script src="js/seller/photos.js"></script>
+  <script src="js/seller/profile-photo.js"></script>
+  <script src="js/seller/post-listing-form.js"></script>
+  <script src="js/admin/panel.js"></script>
+  <script src="js/seller/submit-listing.js"></script>
+  <script src="js/seller/my-listings.js"></script>
+  <!-- Bootstrap -->
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Roots — Farmer Profile">
+  <meta name="theme-color" content="#0f3d22">
+  <title>Roots — Farmer Profile</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!--
+    nav.css is injected automatically by nav.js — no link needed here.
+    dropdowns.css is loaded by userdd.js / notify.js as needed.
+  -->
+
+  <link rel="stylesheet" href="farmer-profile.css">
+</head>
+<body>
+
+  <!-- NAV injected by nav.js -->
+
+  <div class="page">
+
+    <!-- ══════════════════════════════
+         COVER + AVATAR
+    ══════════════════════════════ -->
+    <div class="cover-wrap">
+      <div class="cover-placeholder" id="coverImage">
+        <i class="fas fa-seedling"></i>
+      </div>
+      <div class="avatar-wrap">
+        <div class="profile-avatar" id="profileAvatar" title="Jose Magbanua">
+          JM
+          <div class="avatar-verified-badge" title="Verified Farmer">
+            <i class="fas fa-check"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         PROFILE HEADER CARD
+    ══════════════════════════════ -->
+    <div class="profile-header-card">
+
+      <div class="header-top">
+
+        <div class="name-block">
+          <div class="profile-name">
+            Jose Magbanua
+            <span class="farmer-badge">
+              <i class="fas fa-tractor"></i> Verified Farmer
+            </span>
+          </div>
+          <div class="profile-handle">@jose.magbanua</div>
+          <div class="profile-location">
+            <i class="fas fa-map-marker-alt"></i>
+            Bukidnon, Northern Mindanao
+          </div>
+          <div class="profile-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-val">4.8</span>
+            <span class="rating-count">(124 reviews)</span>
+          </div>
+          <p class="profile-bio">
+            Third-generation organic farmer specializing in highland vegetables and native rice varieties.
+            Running Magbanua Farm since 2008. Proud supplier to local markets and restaurants in CDO.
+          </p>
+        </div>
+
+        <div class="profile-actions">
+          <button class="btn btn-primary" id="followBtn">
+            <i class="fas fa-user-plus"></i>
+            <span>Follow</span>
+          </button>
+          <button class="btn btn-secondary" id="messageBtn">
+            <i class="fas fa-comment-alt"></i>
+            <span>Message</span>
+          </button>
+          <button class="btn btn-secondary btn-icon" id="moreBtn" aria-label="More options">
+            <i class="fas fa-ellipsis-h"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Stats -->
+      <div class="profile-stats">
+        <div class="stat-item" data-target="followers">
+          <span class="stat-num">1.2K</span>
+          <span class="stat-label">Followers</span>
+        </div>
+        <div class="stat-item" data-target="following">
+          <span class="stat-num">348</span>
+          <span class="stat-label">Following</span>
+        </div>
+        <div class="stat-item" data-target="posts">
+          <span class="stat-num">89</span>
+          <span class="stat-label">Posts</span>
+        </div>
+        <div class="stat-item" data-target="products">
+          <span class="stat-num">24</span>
+          <span class="stat-label">Products</span>
+        </div>
+        <div class="stat-item" data-target="sales">
+          <span class="stat-num">532</span>
+          <span class="stat-label">Sales</span>
+        </div>
+      </div>
+
+    </div><!-- /profile-header-card -->
+
+
+    <!-- ══════════════════════════════
+         TABS
+    ══════════════════════════════ -->
+    <div class="profile-tabs" role="tablist" aria-label="Profile sections">
+      <button class="tab-btn active" role="tab" aria-selected="true"  data-tab="posts"    aria-controls="tab-posts">
+        <i class="fas fa-th-large"      aria-hidden="true"></i><span>Posts</span>
+      </button>
+      <button class="tab-btn"           role="tab" aria-selected="false" data-tab="products" aria-controls="tab-products">
+        <i class="fas fa-store"         aria-hidden="true"></i><span>Marketplace</span>
+      </button>
+      <button class="tab-btn"           role="tab" aria-selected="false" data-tab="gallery"  aria-controls="tab-gallery">
+        <i class="fas fa-images"        aria-hidden="true"></i><span>Farm Gallery</span>
+      </button>
+      <button class="tab-btn"           role="tab" aria-selected="false" data-tab="reviews"  aria-controls="tab-reviews">
+        <i class="fas fa-star"          aria-hidden="true"></i><span>Reviews</span>
+      </button>
+      <button class="tab-btn"           role="tab" aria-selected="false" data-tab="about"    aria-controls="tab-about">
+        <i class="fas fa-info-circle"   aria-hidden="true"></i><span>About</span>
+      </button>
+    </div>
+
+
+    <!-- ══════════════════════════════
+         BODY — SIDEBAR + MAIN PANEL
+    ══════════════════════════════ -->
+    <div class="profile-body">
+
+      <!-- ── LEFT SIDEBAR ── -->
+      <aside class="profile-sidebar">
+
+        <!-- Farm Details -->
+        <div class="sidebar-card">
+          <div class="card-title"><i class="fas fa-tractor" aria-hidden="true"></i> Farm Details</div>
+          <div class="farm-detail-row">
+            <i class="fas fa-home farm-icon" aria-hidden="true"></i>
+            <div>
+              <div class="farm-detail-label">Farm Name</div>
+              <div class="farm-detail-val">Magbanua Organic Farm</div>
+            </div>
+          </div>
+          <div class="farm-detail-row">
+            <i class="fas fa-ruler-combined farm-icon" aria-hidden="true"></i>
+            <div>
+              <div class="farm-detail-label">Farm Size</div>
+              <div class="farm-detail-val">3.5 Hectares</div>
+            </div>
+          </div>
+          <div class="farm-detail-row">
+            <i class="fas fa-map-marker-alt farm-icon" aria-hidden="true"></i>
+            <div>
+              <div class="farm-detail-label">Location</div>
+              <div class="farm-detail-val">Manolo Fortich, Bukidnon</div>
+            </div>
+          </div>
+          <div class="farm-detail-row">
+            <i class="fas fa-calendar farm-icon" aria-hidden="true"></i>
+            <div>
+              <div class="farm-detail-label">Farming Since</div>
+              <div class="farm-detail-val">2008 (17 years)</div>
+            </div>
+          </div>
+          <div class="farm-detail-row no-border">
+            <i class="fas fa-seedling farm-icon" aria-hidden="true"></i>
+            <div>
+              <div class="farm-detail-label">Crops Grown</div>
+              <div class="crop-tags">
+                <span class="crop-tag">Ampalaya</span>
+                <span class="crop-tag">Sayote</span>
+                <span class="crop-tag">Native Rice</span>
+                <span class="crop-tag">Tomatoes</span>
+                <span class="crop-tag">Kangkong</span>
+                <span class="crop-tag">Lettuce</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Certifications -->
+        <div class="sidebar-card">
+          <div class="card-title"><i class="fas fa-certificate" aria-hidden="true"></i> Certifications</div>
+          <div class="cert-item">
+            <div class="cert-icon"><i class="fas fa-leaf" aria-hidden="true"></i></div>
+            <div>
+              <div class="cert-name">OCCP Organic Certified</div>
+              <div class="cert-issuer">DA-BAFS · Valid until Dec 2026</div>
+            </div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-icon"><i class="fas fa-shield-alt" aria-hidden="true"></i></div>
+            <div>
+              <div class="cert-name">Good Agricultural Practices</div>
+              <div class="cert-issuer">DA Region X · Valid until Aug 2025</div>
+            </div>
+          </div>
+          <div class="cert-item no-border">
+            <div class="cert-icon"><i class="fas fa-award" aria-hidden="true"></i></div>
+            <div>
+              <div class="cert-name">Roots Verified Seller</div>
+              <div class="cert-issuer">Roots Platform · Active</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Similar Farmers -->
+        <div class="sidebar-card">
+          <div class="card-title"><i class="fas fa-users" aria-hidden="true"></i> Similar Farmers</div>
+          <div class="suggested-list">
+            <div class="suggested-item">
+              <div class="sug-avatar">BT</div>
+              <div class="sug-info">
+                <div class="sug-name">Ben Torres</div>
+                <div class="sug-loc">Negros Occidental</div>
+              </div>
+              <button class="sug-follow-btn">Follow</button>
+            </div>
+            <div class="suggested-item">
+              <div class="sug-avatar" style="background:#c8e6c9;color:#1b5e20">SR</div>
+              <div class="sug-info">
+                <div class="sug-name">Sofia Ramos</div>
+                <div class="sug-loc">Iloilo</div>
+              </div>
+              <button class="sug-follow-btn">Follow</button>
+            </div>
+            <div class="suggested-item no-border">
+              <div class="sug-avatar" style="background:#b2dfdb;color:#004d40">PG</div>
+              <div class="sug-info">
+                <div class="sug-name">Pedro Gonzales</div>
+                <div class="sug-loc">Bukidnon</div>
+              </div>
+              <button class="sug-follow-btn">Follow</button>
+            </div>
+          </div>
+        </div>
+
+      </aside><!-- /sidebar -->
+
+
+      <!-- ── MAIN PANEL ── -->
+      <main class="main-panel">
+
+        <!-- ── POSTS ── -->
+        <div class="tab-panel active" id="tab-posts" role="tabpanel" aria-labelledby="tab-btn-posts">
+
+          <article class="post-card">
+            <div class="post-header">
+              <div class="post-avatar">JM</div>
+              <div class="post-meta">
+                <div class="post-author">Jose Magbanua</div>
+                <div class="post-time">2 days ago · <i class="fas fa-globe-asia" aria-hidden="true"></i></div>
+              </div>
+              <button class="post-options-btn" aria-label="Post options"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="post-body">
+              🌿 Fresh harvest of organic ampalaya ready for pick-up! No pesticides, grown in the highlands of Bukidnon.
+              Selling at ₱60/kg. DM for bulk orders.
+              <span class="post-tag-inline">#ampalaya #organicfarming #bukidnon</span>
+            </div>
+            <div class="post-media-placeholder"><i class="fas fa-seedling" aria-hidden="true"></i></div>
+            <div class="post-reaction-bar">
+              <div class="reaction-left">❤️ <span class="reaction-count">156</span></div>
+              <div class="reaction-right">
+                <span>32 comments</span>
+                <span class="dot">·</span>
+                <span>18 shares</span>
+              </div>
+            </div>
+            <div class="post-sep"></div>
+            <div class="post-actions">
+              <button class="post-action-btn" data-action="like">
+                <i class="far fa-heart" aria-hidden="true"></i><span>Like</span>
+              </button>
+              <button class="post-action-btn" data-action="comment">
+                <i class="far fa-comment" aria-hidden="true"></i><span>Comment</span>
+              </button>
+              <button class="post-action-btn" data-action="share">
+                <i class="fas fa-share-alt" aria-hidden="true"></i><span>Share</span>
+              </button>
+            </div>
+          </article>
+
+          <article class="post-card">
+            <div class="post-header">
+              <div class="post-avatar">JM</div>
+              <div class="post-meta">
+                <div class="post-author">Jose Magbanua</div>
+                <div class="post-time">1 week ago · <i class="fas fa-globe-asia" aria-hidden="true"></i></div>
+              </div>
+              <button class="post-options-btn" aria-label="Post options"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="post-body">
+              💡 Tip: Plant marigolds as border crops around your vegetables. Natural pest deterrent and attracts beneficial insects.
+              Been doing this for 5 seasons — it works! 🌼
+            </div>
+            <div class="post-reaction-bar">
+              <div class="reaction-left">❤️ <span class="reaction-count">234</span></div>
+              <div class="reaction-right">
+                <span>45 comments</span>
+                <span class="dot">·</span>
+                <span>89 shares</span>
+              </div>
+            </div>
+            <div class="post-sep"></div>
+            <div class="post-actions">
+              <button class="post-action-btn liked" data-action="like">
+                <i class="fas fa-heart" aria-hidden="true"></i><span>Liked</span>
+              </button>
+              <button class="post-action-btn" data-action="comment">
+                <i class="far fa-comment" aria-hidden="true"></i><span>Comment</span>
+              </button>
+              <button class="post-action-btn" data-action="share">
+                <i class="fas fa-share-alt" aria-hidden="true"></i><span>Share</span>
+              </button>
+            </div>
+          </article>
+
+          <article class="post-card">
+            <div class="post-header">
+              <div class="post-avatar">JM</div>
+              <div class="post-meta">
+                <div class="post-author">Jose Magbanua</div>
+                <div class="post-time">2 weeks ago · <i class="fas fa-globe-asia" aria-hidden="true"></i></div>
+              </div>
+              <button class="post-options-btn" aria-label="Post options"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="post-body">
+              🌾 Our native rice (Dinorado variety) is almost ready for harvest! This is my grandfather's cultivar —
+              sweet, aromatic, and chemical-free. Limited stocks. Pre-order now via DM or our Roots shop.
+            </div>
+            <div class="post-media-placeholder"><i class="fas fa-wheat-awn" aria-hidden="true"></i></div>
+            <div class="post-reaction-bar">
+              <div class="reaction-left">❤️ <span class="reaction-count">312</span></div>
+              <div class="reaction-right">
+                <span>67 comments</span>
+                <span class="dot">·</span>
+                <span>112 shares</span>
+              </div>
+            </div>
+            <div class="post-sep"></div>
+            <div class="post-actions">
+              <button class="post-action-btn" data-action="like">
+                <i class="far fa-heart" aria-hidden="true"></i><span>Like</span>
+              </button>
+              <button class="post-action-btn" data-action="comment">
+                <i class="far fa-comment" aria-hidden="true"></i><span>Comment</span>
+              </button>
+              <button class="post-action-btn" data-action="share">
+                <i class="fas fa-share-alt" aria-hidden="true"></i><span>Share</span>
+              </button>
+            </div>
+          </article>
+
+        </div><!-- /tab-posts -->
+
+
+        <!-- ── MARKETPLACE ── -->
+        <div class="tab-panel" id="tab-products" role="tabpanel">
+
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <span><i class="fas fa-store" aria-hidden="true"></i> Active Listings (24)</span>
+              <a href="#" class="panel-link">View all</a>
+            </div>
+            <div class="products-grid">
+
+              <div class="product-card">
+                <div class="product-img-placeholder"><i class="fas fa-leaf" aria-hidden="true"></i></div>
+                <div class="product-info">
+                  <div class="product-name">Organic Ampalaya</div>
+                  <div class="product-price">₱60 <span class="product-unit">/ kg</span></div>
+                  <span class="stock-badge stock-in"><i class="fas fa-circle"></i> In Stock · 45 kg</span>
+                </div>
+                <button class="add-cart-btn" data-product="Organic Ampalaya">
+                  <i class="fas fa-shopping-cart" aria-hidden="true"></i> Add to Cart
+                </button>
+              </div>
+
+              <div class="product-card">
+                <div class="product-img-placeholder"><i class="fas fa-seedling" aria-hidden="true"></i></div>
+                <div class="product-info">
+                  <div class="product-name">Dinorado Native Rice</div>
+                  <div class="product-price">₱85 <span class="product-unit">/ kg</span></div>
+                  <span class="stock-badge stock-low"><i class="fas fa-circle"></i> Low Stock · 12 kg</span>
+                </div>
+                <button class="add-cart-btn" data-product="Dinorado Native Rice">
+                  <i class="fas fa-shopping-cart" aria-hidden="true"></i> Add to Cart
+                </button>
+              </div>
+
+              <div class="product-card">
+                <div class="product-img-placeholder"><i class="fas fa-apple-alt" aria-hidden="true"></i></div>
+                <div class="product-info">
+                  <div class="product-name">Organic Tomatoes</div>
+                  <div class="product-price">₱75 <span class="product-unit">/ kg</span></div>
+                  <span class="stock-badge stock-in"><i class="fas fa-circle"></i> In Stock · 30 kg</span>
+                </div>
+                <button class="add-cart-btn" data-product="Organic Tomatoes">
+                  <i class="fas fa-shopping-cart" aria-hidden="true"></i> Add to Cart
+                </button>
+              </div>
+
+              <div class="product-card">
+                <div class="product-img-placeholder"><i class="fas fa-spa" aria-hidden="true"></i></div>
+                <div class="product-info">
+                  <div class="product-name">Highland Sayote</div>
+                  <div class="product-price">₱40 <span class="product-unit">/ kg</span></div>
+                  <span class="stock-badge stock-in"><i class="fas fa-circle"></i> In Stock · 60 kg</span>
+                </div>
+                <button class="add-cart-btn" data-product="Highland Sayote">
+                  <i class="fas fa-shopping-cart" aria-hidden="true"></i> Add to Cart
+                </button>
+              </div>
+
+              <div class="product-card">
+                <div class="product-img-placeholder"><i class="fas fa-leaf" aria-hidden="true"></i></div>
+                <div class="product-info">
+                  <div class="product-name">Fresh Kangkong</div>
+                  <div class="product-price">₱25 <span class="product-unit">/ bundle</span></div>
+                  <span class="stock-badge stock-in"><i class="fas fa-circle"></i> In Stock · 80 bundles</span>
+                </div>
+                <button class="add-cart-btn" data-product="Fresh Kangkong">
+                  <i class="fas fa-shopping-cart" aria-hidden="true"></i> Add to Cart
+                </button>
+              </div>
+
+              <div class="product-card">
+                <div class="product-img-placeholder"><i class="fas fa-seedling" aria-hidden="true"></i></div>
+                <div class="product-info">
+                  <div class="product-name">Organic Lettuce Mix</div>
+                  <div class="product-price">₱55 <span class="product-unit">/ 250g</span></div>
+                  <span class="stock-badge stock-low"><i class="fas fa-circle"></i> Low Stock · 8 packs</span>
+                </div>
+                <button class="add-cart-btn" data-product="Organic Lettuce Mix">
+                  <i class="fas fa-shopping-cart" aria-hidden="true"></i> Add to Cart
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div><!-- /tab-products -->
+
+
+        <!-- ── GALLERY ── -->
+        <div class="tab-panel" id="tab-gallery" role="tabpanel">
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <span><i class="fas fa-images" aria-hidden="true"></i> Farm Gallery (36)</span>
+              <a href="#" class="panel-link">Upload Photo</a>
+            </div>
+            <div class="gallery-grid">
+              <div class="gallery-cell"><i class="fas fa-seedling"    aria-hidden="true"></i></div>
+              <div class="gallery-cell"><i class="fas fa-leaf"        aria-hidden="true"></i></div>
+              <div class="gallery-cell"><i class="fas fa-tractor"     aria-hidden="true"></i></div>
+              <div class="gallery-cell"><i class="fas fa-apple-alt"   aria-hidden="true"></i></div>
+              <div class="gallery-cell"><i class="fas fa-spa"         aria-hidden="true"></i></div>
+              <div class="gallery-cell"><i class="fas fa-sun"         aria-hidden="true"></i></div>
+              <div class="gallery-cell"><i class="fas fa-water"       aria-hidden="true"></i></div>
+              <div class="gallery-cell"><i class="fas fa-mountain"    aria-hidden="true"></i></div>
+              <div class="gallery-cell"><i class="fas fa-pepper-hot"  aria-hidden="true"></i></div>
+              <div class="gallery-cell"><i class="fas fa-egg"         aria-hidden="true"></i></div>
+              <div class="gallery-cell"><i class="fas fa-seedling"    aria-hidden="true"></i></div>
+              <div class="gallery-cell"><i class="fas fa-leaf"        aria-hidden="true"></i></div>
+            </div>
+          </div>
+        </div><!-- /tab-gallery -->
+
+
+        <!-- ── REVIEWS ── -->
+        <div class="tab-panel" id="tab-reviews" role="tabpanel">
+          <div class="panel-card no-padding">
+
+            <div class="reviews-summary">
+              <div class="big-rating-block">
+                <div class="big-rating-num">4.8</div>
+                <div class="big-rating-stars">★★★★★</div>
+                <div class="big-rating-count">124 reviews</div>
+              </div>
+              <div class="rating-bars">
+                <div class="rating-bar-row">
+                  <span class="bar-label">5</span>
+                  <div class="bar-track"><div class="bar-fill" style="width:78%"></div></div>
+                  <span class="bar-count">97</span>
+                </div>
+                <div class="rating-bar-row">
+                  <span class="bar-label">4</span>
+                  <div class="bar-track"><div class="bar-fill" style="width:14%"></div></div>
+                  <span class="bar-count">17</span>
+                </div>
+                <div class="rating-bar-row">
+                  <span class="bar-label">3</span>
+                  <div class="bar-track"><div class="bar-fill low" style="width:5%"></div></div>
+                  <span class="bar-count">6</span>
+                </div>
+                <div class="rating-bar-row">
+                  <span class="bar-label">2</span>
+                  <div class="bar-track"><div class="bar-fill lower" style="width:2%"></div></div>
+                  <span class="bar-count">3</span>
+                </div>
+                <div class="rating-bar-row">
+                  <span class="bar-label">1</span>
+                  <div class="bar-track"><div class="bar-fill lowest" style="width:1%"></div></div>
+                  <span class="bar-count">1</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="review-item">
+              <div class="review-header">
+                <div class="review-avatar">AR</div>
+                <div class="review-meta">
+                  <div class="review-name">Ana Reyes</div>
+                  <div class="review-date">May 10, 2026</div>
+                </div>
+                <div class="review-stars">★★★★★</div>
+              </div>
+              <p class="review-text">Super fresh ang ampalaya! Delivered on time and well-packaged. Taste is so much better than market bought. Will definitely order again!</p>
+              <div class="review-product"><i class="fas fa-leaf"></i> Organic Ampalaya</div>
+            </div>
+
+            <div class="review-item">
+              <div class="review-header">
+                <div class="review-avatar" style="background:#b2dfdb;color:#004d40">MG</div>
+                <div class="review-meta">
+                  <div class="review-name">Marco Garcia</div>
+                  <div class="review-date">April 28, 2026</div>
+                </div>
+                <div class="review-stars">★★★★★</div>
+              </div>
+              <p class="review-text">The Dinorado rice is exceptional — our family hasn't tasted native rice this good in years. Aromatic and naturally sweet. Highly recommended!</p>
+              <div class="review-product"><i class="fas fa-seedling"></i> Dinorado Native Rice</div>
+            </div>
+
+            <div class="review-item no-border">
+              <div class="review-header">
+                <div class="review-avatar" style="background:#c8e6c9;color:#1b5e20">LP</div>
+                <div class="review-meta">
+                  <div class="review-name">Liza Patino</div>
+                  <div class="review-date">April 15, 2026</div>
+                </div>
+                <div class="review-stars">★★★★☆</div>
+              </div>
+              <p class="review-text">Good quality vegetables, organic talaga. Delivery took a little longer but Mang Jose communicated well. Overall satisfied!</p>
+              <div class="review-product"><i class="fas fa-apple-alt"></i> Organic Tomatoes</div>
+            </div>
+
+          </div>
+        </div><!-- /tab-reviews -->
+
+
+        <!-- ── ABOUT ── -->
+        <div class="tab-panel" id="tab-about" role="tabpanel">
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <span>About Jose Magbanua</span>
+            </div>
+            <p class="about-bio">
+              Jose Magbanua is a third-generation farmer from Manolo Fortich, Bukidnon. He inherited Magbanua Farm from his father in 2008 and has since transformed it into a fully certified organic operation. Jose is passionate about sustainable farming practices, seed preservation, and helping fellow farmers transition to organic methods.
+            </p>
+            <div class="about-details">
+              <div class="about-row">
+                <i class="fas fa-envelope" aria-hidden="true"></i>
+                <span>jose.magbanua@roots.ph</span>
+              </div>
+              <div class="about-row">
+                <i class="fas fa-phone" aria-hidden="true"></i>
+                <span>+63 917 xxx xxxx</span>
+              </div>
+              <div class="about-row">
+                <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+                <span>Joined Roots: January 2024</span>
+              </div>
+              <div class="about-row">
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                <span>Manolo Fortich, Bukidnon, Northern Mindanao</span>
+              </div>
+            </div>
+          </div>
+        </div><!-- /tab-about -->
+
+      </main><!-- /main-panel -->
+
+    </div><!-- /profile-body -->
+
+  </div><!-- /page -->
+
+  <!--
+    Load order matters:
+    1. nav.js      — injects nav HTML + nav.css, sets up dropdowns & page transitions
+    2. routes.js   — client-side routing helpers (used by base.js)
+    3. base.js     — Base.resolveAll(), shared utilities
+    4. userdd.js   — user dropdown (avatar menu)
+    5. notify.js   — notification bell badge
+    6. farmer-profile.js — page-specific interactions
+  -->
+  <script src="/shared/nav.js"></script>
+  <script src="/shared/routes.js"></script>
+  <script src="/shared/base.js"></script>
+  <script src="/shared/userdd.js"></script>
+  <script src="/shared/notify.js"></script>
+
+  <script src="farmer-profile.js"></script>
+
+  <script>
+    /* Init shared modules that need explicit calls */
+    if (typeof initNotifications === 'function') initNotifications({ fakeData: true });
+    if (typeof Base !== 'undefined' && Base.resolveAll) Base.resolveAll();
+    if (typeof initUserDropdown === 'function') {
+      initUserDropdown({
+        user: { initials: 'KM', name: 'Karlo Mendoza', role: 'Farmer · Zamboanga del Sur' },
+        onAction: (action) => { if (action === 'logout') console.log('[Roots] Logout'); }
+      });
+    }
+  </script>
+
+</body>
+</html>

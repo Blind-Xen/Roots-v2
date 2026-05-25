@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roots • Harvest Calendar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="calendar-nonfarmer.css">
+  <link rel="stylesheet" href="../../../shared/dropdowns.css">
+</head>
+<body>
+
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="/">
+    <div class="nav-brand-icon">🌱</div>
+    <span class="nav-brand-name">Roots</span>
+  </a>
+
+  <!-- Main nav tabs matching wireframe: Home · Videos · Market · Plant -->
+  <div class="nav-links">
+    <a href="../../../community/views/roots-feed.html" data-route="home" class="nav-link">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </a>
+    <a href="#" class="nav-link">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      Videos
+    </a>
+    <a href="../../../market/market.html" data-route="market" class="nav-link">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Market
+    </a>
+    <a href="../../../tanim/tanim/tanimbase.html" data-route="tanim" class="nav-link">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 2c-2.76 3.6-4 7.4-4 10s1.24 6.4 4 10M12 2c2.76 3.6 4 7.4 4 10s-1.24 6.4-4 10M2 12h20"/></svg>
+      Plant
+    </a>
+  </div>
+
+  <!-- Search -->
+  <div class="nav-search">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search Roots...">
+  </div>
+
+  <!-- Right: Bell + Profile -->
+  <div class="nav-right">
+    <div class="nav-notif" role="button" tabindex="0">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <div class="nav-notif-badge">4</div>
+    </div>
+
+    <!-- Profile avatar + dropdown -->
+    <div class="nav-profile">
+      <div class="nav-avatar" id="avatarBtn"></div>
+      <div class="profile-dropdown" id="profileDropdown"></div>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════ -->
+<main class="content">
+
+  <div class="cal-app-layout">
+
+    <!-- ── LEFT SIDEBAR ── -->
+    <aside class="cal-sidebar">
+
+      <div class="sidebar-title-block">
+        <h2 class="sidebar-cal-title" id="calendarTitle"><i class="fas fa-seedling"></i> Kuya Mario's Calendar</h2>
+        <p class="sidebar-cal-sub" id="calendarSubtitle">Welcome back to your farm planning hub.</p>
+      </div>
+
+      <!-- Mini Calendar — click to toggle My Farm ↔ Community -->
+      <div class="mini-cal-card" id="miniCalCard" onclick="toggleCalendarMode()" title="Click to switch between My Farm and Community calendar">
+        <div class="mini-cal-topbar">
+          <span class="mini-cal-badge" id="miniCalBadge"><i class="fas fa-users"></i> Community</span>
+          <i class="fas fa-exchange-alt mini-swap-icon"></i>
+        </div>
+        <div class="mini-cal-month-lbl" id="miniCalMonthLabel">—</div>
+        <div class="mini-cal-dow-row">
+          <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+        </div>
+        <div class="mini-cal-grid" id="miniCalGrid"></div>
+      </div>
+
+      <!-- View Toggle -->
+      <div class="sidebar-section">
+        <div class="view-toggle sidebar-view-toggle">
+          <button class="view-btn active" id="viewMonth"  onclick="switchView('month')"><i class="fas fa-calendar"></i> Month</button>
+          <button class="view-btn"        id="viewWeek"   onclick="switchView('week')"><i class="fas fa-calendar-week"></i> Week</button>
+          <button class="view-btn"        id="viewToday"  onclick="switchView('today')"><i class="fas fa-sun"></i> Today</button>
+        </div>
+      </div>
+
+      <!-- Month Navigation -->
+      <div class="sidebar-section">
+        <div class="month-nav sidebar-month-nav">
+          <button onclick="prevMonth()" class="nav-arrow"><i class="fas fa-chevron-left"></i></button>
+          <div class="month-display">
+            <span id="monthName"></span>&nbsp;<span id="yearName"></span>
+          </div>
+          <button onclick="nextMonth()" class="nav-arrow"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <button onclick="goToToday()" class="nav-today-btn sidebar-today-btn">Today</button>
+      </div>
+
+      <!-- Stats (compact) -->
+      <div class="stats-strip sidebar-stats" id="statsStrip"></div>
+
+      <!-- Hidden legacy mode buttons kept for JS compatibility -->
+      <span style="display:none" id="modeMyFarm"></span>
+      <span style="display:none" id="modeCommunity"></span>
+
+    </aside>
+
+    <!-- ── MAIN CALENDAR AREA ── -->
+    <div class="cal-main-area">
+
+      <div class="cal-main-header">
+        <div class="calendar-legend cal-main-legend">
+          <span class="legend-item"><span class="legend-dot dot-task"></span>Farm Task</span>
+          <span class="legend-item"><span class="legend-dot dot-harvest"></span>Harvest</span>
+          <span class="legend-item"><span class="legend-dot dot-pest"></span>Pest Alert</span>
+          <span class="legend-item"><span class="legend-dot dot-da"></span>DA Event</span>
+          <span class="legend-item"><span class="legend-dot dot-market"></span>Market Day</span>
+        </div>
+        <div class="header-control-group">
+          <div class="header-layer-icons">
+            <button class="layer-icon-btn active" id="layerTasks" onclick="toggleLayer('tasks', this)" title="Farm Tasks"><i class="fas fa-seedling"></i></button>
+            <button class="layer-icon-btn active" id="layerDA" onclick="toggleLayer('da', this)" title="DA Events"><i class="fas fa-landmark"></i></button>
+            <button class="layer-icon-btn" id="layerMarket" onclick="toggleLayer('market', this)" title="Market"><i class="fas fa-store"></i></button>
+            <button class="layer-icon-btn" id="layerWeather" onclick="toggleLayer('weather', this)" title="Weather"><i class="fas fa-cloud-sun"></i></button>
+            <button class="layer-icon-btn" id="layerMoon" onclick="toggleLayer('moon', this)" title="Moon Phases"><i class="fas fa-moon"></i></button>
+          </div>
+          <button class="add-event-top-btn" id="addEventBtn" onclick="openAddEventModal()">
+            <i class="fas fa-plus-circle"></i> Add Farm Event
+          </button>
+        </div>
+      </div>
+
+      <!-- MONTH VIEW -->
+      <div id="monthView" class="cal-view-panel">
+        <div class="calendar-wrapper">
+          <div class="calendar-dow-header">
+            <div>Sun</div><div>Mon</div><div>Tue</div>
+            <div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+      </div>
+
+      <!-- TODAY VIEW -->
+      <div id="todayView" class="cal-view-panel hidden">
+        <div id="todayViewContent"></div>
+      </div>
+
+      <!-- WEEK VIEW -->
+      <div id="weekView" class="cal-view-panel hidden">
+        <div id="weekViewContent"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── BOTTOM PANELS ── -->
+  <div class="cal-bottom-row">
+    <div class="bottom-panel lifecycle-panel">
+      <h3><i class="fas fa-seedling"></i> Active Lifecycles</h3>
+      <div id="lifecycleProgress"></div>
+    </div>
+    <div class="bottom-panel upcoming-panel">
+      <h3><i class="fas fa-list-ul"></i> Upcoming This Week</h3>
+      <div id="upcomingList"></div>
+    </div>
+    <div class="bottom-panel da-panel">
+      <h3><i class="fas fa-landmark"></i> DA Resources</h3>
+      <div id="daEventsList"></div>
+    </div>
+  </div>
+
+  <button class="fab-add" onclick="openAddEventModal()"><i class="fas fa-plus"></i></button>
+
+</main>
+
+
+<!-- ══════════════════════════════════════════
+     ADD / EDIT EVENT MODAL
+══════════════════════════════════════════ -->
+<div class="modal hidden" id="addEventModal">
+  <div class="modal-content">
+    <button class="close-modal" onclick="closeAddEventModal()" aria-label="Close">✕</button>
+    <h3 id="addModalTitle"><i class="fas fa-plus-circle" style="color:var(--calendar-green)"></i> Add Calendar Event</h3>
+
+    <div class="form-group">
+      <label class="public-toggle-label">
+        <input type="checkbox" id="eventIsPublic" style="width:16px;height:16px;accent-color:var(--calendar-green)">
+        <span>
+          <strong>📢 Post to Community Calendar</strong><br>
+          <small style="color:#888;font-weight:400">Let other Roots users see this event</small>
+        </span>
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label>Event Type</label>
+      <select id="eventType" onchange="onEventTypeChange()">
+        <option value="">-- Select type --</option>
+        <option value="planting">🌱 Planting Day</option>
+        <option value="harvest">🌾 Harvest Day</option>
+        <option value="fertilizer">🧪 Fertilizer Application</option>
+        <option value="weeding">🌿 Weeding / Cultivation</option>
+        <option value="pestControl">🐛 Pest Control</option>
+        <option value="irrigation">💧 Irrigation Schedule</option>
+        <option value="vaccination">💉 Animal Vaccination</option>
+        <option value="daEvent">🏛️ DA Event / Seminar</option>
+        <option value="marketDay">🛒 Market Day</option>
+        <option value="note">📝 Custom Farm Note</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="cropGroup" style="display:none">
+      <label>Crop Type</label>
+      <select id="eventCrop">
+        <option value="">-- Select crop --</option>
+        <option value="rice">🌾 Palay / Rice</option>
+        <option value="corn">🌽 Corn / Mais</option>
+        <option value="vegetables">🥬 Vegetables</option>
+        <option value="banana">🍌 Banana / Saging</option>
+        <option value="coconut">🥥 Coconut / Niyog</option>
+        <option value="cassava">🍠 Kamoteng Kahoy / Cassava</option>
+        <option value="sweetPotato">🍠 Kamote / Sweet Potato</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Event Title</label>
+      <input type="text" id="eventTitle" placeholder="e.g. Rice Planting – Wet Season">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="eventDate"></div>
+      <div class="form-group"><label>Time (optional)</label><input type="time" id="eventTime"></div>
+    </div>
+
+    <div class="form-group" id="recurrenceGroup">
+      <label>Repeat</label>
+      <select id="eventRecurrence">
+        <option value="none">Does not repeat</option>
+        <option value="weekly">Every week</option>
+        <option value="biweekly">Every 2 weeks</option>
+        <option value="monthly">Every month</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Location / Field</label>
+      <input type="text" id="eventLocation" placeholder="e.g. Upper rice field, Purok 3">
+    </div>
+
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="eventNotes" placeholder="Additional details, reminders, or observations..."></textarea>
+    </div>
+
+    <div class="auto-tasks-notice hidden" id="autoTasksNotice">
+      <i class="fas fa-magic"></i>
+      <strong>Smart Schedule:</strong> Selecting <em>Planting Day</em> will auto-generate a full crop lifecycle.
+    </div>
+
+    <div class="form-actions">
+      <button class="btn secondary" onclick="closeAddEventModal()">Cancel</button>
+      <button class="btn primary" onclick="submitEvent()"><i class="fas fa-calendar-check"></i> Save Event</button>
+    </div>
+  </div>
+</div>
+
+<!-- DAY DETAIL MODAL -->
+<div class="modal hidden" id="dayDetailModal">
+  <div class="modal-content">
+    <button class="close-modal" onclick="closeDayDetailModal()" aria-label="Close">✕</button>
+    <div id="dayDetailContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../../../shared/notify.js"></script>
+<script src="../../../shared/userdd.js"></script>
+<script src="calendar-nonfarmer.js"></script>
+</body>
+</html>

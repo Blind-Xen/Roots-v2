@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="app-root" content="../">
+    <title>Roots — Marketplace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="market-styles.css">
+    <link rel="stylesheet" href="../../shared/dropdowns.css">
+</head>
+<body>
+
+<!-- NAV injected by nav.js -->
+
+<!-- PAGE -->
+<div class="page">
+  <!-- HEADER -->
+  <div class="market-header">
+    <div>
+      <h1 class="market-title">Marketplace</h1>
+      <p class="market-subtitle">Explore local products from farmers in your area</p>
+    </div>
+  </div>
+
+  <!-- CATEGORY CARDS -->
+  <div class="category-cards">
+    <!-- Fruits & Vegetables -->
+    <a href="./fruites&Vegs/index.html" class="category-card">
+      <div class="category-card-icon">🥬</div>
+      <h2 class="category-card-title">Fruits & Vegetables</h2>
+      <p class="category-card-desc">Fresh, organic produce directly from local farmers. Get the best seasonal vegetables and fruits at fair prices.</p>
+      <div class="category-card-cta">
+        <span>Browse Products</span>
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+    </a>
+
+    <!-- Land & Equipment -->
+    <a href="./land&equipment/le-mod.html" class="category-card">
+      <div class="category-card-icon">🚜</div>
+      <h2 class="category-card-title">Land & Equipment</h2>
+      <p class="category-card-desc">Quality agricultural tools, machinery, and equipment for modern farming. Find everything you need for efficient farming operations.</p>
+      <div class="category-card-cta">
+        <span>Browse Products</span>
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+    </a>
+
+    <!-- Livestock -->
+    <a href="./livestock/livestock.html" class="category-card">
+      <div class="category-card-icon">🐑</div>
+      <h2 class="category-card-title">Livestock</h2>
+      <p class="category-card-desc">Healthy and certified livestock for breeding and farming. Connect with trusted breeders and farmers in your community.</p>
+      <div class="category-card-cta">
+        <span>Browse Animals</span>
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+    </a>
+  </div>
+</div>
+
+<script src="../../shared/nav.js"></script>
+<script src="../../shared/routes.js"></script>
+<script src="../../shared/base.js"></script>
+<script src="../../shared/userdd.js"></script>
+<script src="../../shared/messaging.js"></script>
+<script src="../../shared/notify.js"></script>
+<script src="market-script.js"></script>
+<script>
+  initNotifications({ fakeData: true });
+  Base.resolveAll();
+</script>
+
+</body>
+</html>

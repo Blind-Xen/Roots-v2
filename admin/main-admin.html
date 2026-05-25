@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="app-root" content="/" />
+  <title>Roots Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+
+  <link rel="stylesheet" href="../shared/nav.css" />
+  <link rel="stylesheet" href="main-admin.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-logo">
+        <i class="ti ti-plant-2"></i>
+      </div>
+      <span class="nav-title">roots <span class="nav-accent">admin</span></span>
+    </div>
+    <div class="nav-right">
+      <span class="nav-badge">
+        <span class="badge-dot"></span>All systems live
+      </span>
+      <div class="nav-avatar" id="nav-avatar">AD</div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Modules</div>
+        <div class="stat-value">10</div>
+        <div class="stat-sub"><span class="stat-dot"></span>All accessible</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Live</div>
+        <div class="stat-value accent-green" id="s-live">—</div>
+        <div class="stat-sub">In production</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Beta</div>
+        <div class="stat-value accent-amber" id="s-beta">—</div>
+        <div class="stat-sub">Under review</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">In Dev</div>
+        <div class="stat-value accent-gray" id="s-dev">—</div>
+        <div class="stat-sub">Not deployed</div>
+      </div>
+    </div>
+
+    <!-- SECTION HEADER -->
+    <div class="section-header">
+      <h2>Modules</h2>
+      <p>Select a module to open its admin panel</p>
+    </div>
+
+    <!-- SEARCH + FILTER -->
+    <div class="search-row">
+      <div class="search-wrap">
+        <i class="ti ti-search"></i>
+        <input type="text" id="search-input" placeholder="Search modules…" />
+      </div>
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="live">Live</button>
+      <button class="filter-btn" data-filter="beta">Beta</button>
+      <button class="filter-btn" data-filter="dev">Dev</button>
+    </div>
+
+    <!-- GRID -->
+    <div class="modules-grid" id="grid"></div>
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state hidden" id="empty-state">
+      <i class="ti ti-search"></i>
+      <p>No modules match your search</p>
+    </div>
+
+  </main>
+
+  <script src="../shared/nav.js"></script>
+  <script src="../shared/routes.js"></script>
+  <script src="../shared/base.js"></script>
+  <script src="../shared/userdd.js"></script>
+  <script src="../shared/messaging.js"></script>
+  <script src="../shared/notify.js"></script>
+  <script src="main-admin.js"></script>
+  <script>
+    initNotifications({ fakeData: true });
+    Base.resolveAll();
+  </script>
+</body>
+</html>

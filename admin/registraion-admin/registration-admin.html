@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roots — Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="RootsRegistration.css">
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- Wrap in dashView so shared CSS scoping works -->
+<div id="dashView" class="view active">
+
+  <!-- ── TOP NAVBAR ── -->
+  <nav class="fb-topbar">
+    <div class="fb-logo">
+      <div class="fb-logo-icon">🌱</div>
+      <span>Roots Admin</span>
+    </div>
+    <div class="fb-search">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search farmers…" id="globalSearch">
+    </div>
+    <div class="fb-center-nav">
+      <button class="fb-nav-btn" title="Back to Dashboard" onclick="window.location.href='dashboard.html'"><i class="fas fa-home"></i><span class="nav-label">Dashboard</span></button>
+      <button class="fb-nav-btn active" id="navAdmin" title="Admin Panel"><i class="fas fa-shield-alt"></i><span class="nav-label">Admin</span></button>
+    </div>
+    <div class="fb-right-actions">
+      <button class="fb-action-btn" id="notifBtn" onclick="toggleDropdown('notif')" title="Notifications">
+        <i class="fas fa-bell"></i>
+        <span class="fb-notif-badge" id="notifBadge">4</span>
+      </button>
+      <div class="fb-avatar-btn" id="topbarAv" onclick="toggleDropdown('profile')" title="Account">AD</div>
+    </div>
+  </nav>
+
+  <!-- ── PROFILE DROPDOWN ── -->
+  <div class="fb-dropdown" id="profileDropdown">
+    <div class="profile-header">
+      <div class="profile-av-lg" id="profileDropAv">AD</div>
+      <div class="profile-name" id="profileDropName">Admin</div>
+      <div class="profile-role-tag" id="profileDropRole">🛡️ Administrator</div>
+    </div>
+    <button class="profile-menu-item" onclick="window.location.href='dashboard.html'">
+      <i class="fas fa-home"></i>
+      <div><div style="font-weight:600">Back to Dashboard</div></div>
+    </button>
+    <button class="profile-menu-item danger" onclick="window.location.href='index.html'">
+      <i class="fas fa-sign-out-alt"></i>
+      <div><div style="font-weight:600">Log Out</div></div>
+    </button>
+  </div>
+
+  <!-- ── BODY ── -->
+  <div class="dash-body-wrap">
+    <div class="dash-main" id="mainContent">
+      <!-- ──── ADMIN PANEL ──── -->
+      <div class="panel-view" id="panelAdmin">
+        <div class="admin-banner">
+          <div class="admin-banner-left">
+            <h2>🛡️ Admin Control Center</h2>
+            <p>Manage farmer verifications, registrations, and platform oversight</p>
+          </div>
+          <span class="admin-badge">Admin Access</span>
+        </div>
+        <div class="admin-stats">
+          <div class="admin-stat" style="animation-delay:.05s">
+            <div class="admin-stat-icon" style="background:rgba(82,183,136,.12)">🌾</div>
+            <div class="admin-stat-num" id="statTotalFarmers">24</div>
+            <div class="admin-stat-lbl">Total Farmers</div>
+          </div>
+          <div class="admin-stat" style="animation-delay:.1s">
+            <div class="admin-stat-icon" style="background:rgba(245,158,11,.12)">⏳</div>
+            <div class="admin-stat-num" id="statPending">3</div>
+            <div class="admin-stat-lbl">Pending Verification</div>
+          </div>
+          <div class="admin-stat" style="animation-delay:.15s">
+            <div class="admin-stat-icon" style="background:rgba(82,183,136,.12)">✅</div>
+            <div class="admin-stat-num" id="statVerified">19</div>
+            <div class="admin-stat-lbl">Verified Farmers</div>
+          </div>
+          <div class="admin-stat" style="animation-delay:.2s">
+            <div class="admin-stat-icon" style="background:rgba(220,38,38,.08)">❌</div>
+            <div class="admin-stat-num" id="statRejected">2</div>
+            <div class="admin-stat-lbl">Rejected</div>
+          </div>
+          <div class="admin-stat" style="animation-delay:.25s">
+            <div class="admin-stat-icon" style="background:rgba(59,130,246,.1)">👤</div>
+            <div class="admin-stat-num" id="statNonFarmers">1</div>
+            <div class="admin-stat-lbl">Non-Farmer Members</div>
+          </div>
+        </div>
+        <div class="verify-panel">
+          <div class="verify-header">
+            <span class="verify-title"><i class="fas fa-user-check"></i> Farmer Verification Queue</span>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <div class="verify-search-wrap">
+                <i class="fas fa-search" style="color:#ccc;font-size:13px"></i>
+                <input type="text" placeholder="Search farmers…" id="farmerSearch" oninput="filterFarmers()">
+              </div>
+              <button onclick="removeAllAccounts()" style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(220,38,38,.1);color:#DC2626;border:1.5px solid rgba(220,38,38,.25);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap"
+                onmouseover="this.style.background='#DC2626';this.style.color='#fff'"
+                onmouseout="this.style.background='rgba(220,38,38,.1)';this.style.color='#DC2626'">
+                <i class="fas fa-trash-alt"></i> Remove All Accounts
+              </button>
+            </div>
+          </div>
+          <div class="verify-filter-row">
+            <button class="vf-tab active" data-filter="all" onclick="setFarmerFilter('all',this)">All <span class="vf-count" id="cntAll">24</span></button>
+            <button class="vf-tab" data-filter="pending" onclick="setFarmerFilter('pending',this)">Pending <span class="vf-count" id="cntPending">3</span></button>
+            <button class="vf-tab" data-filter="verified" onclick="setFarmerFilter('verified',this)">Verified <span class="vf-count" id="cntVerified">19</span></button>
+            <button class="vf-tab" data-filter="rejected" onclick="setFarmerFilter('rejected',this)">Rejected <span class="vf-count" id="cntRejected">2</span></button>
+          </div>
+          <div id="farmerList"></div>
+        </div>
+      </div>
+
+
+    </div><!-- /dash-main -->
+  </div><!-- /dash-body-wrap -->
+</div><!-- /dashView -->
+
+<!-- ═══════════════════ FARMER DETAIL MODAL ═══════════════════ -->
+<div class="modal-overlay" id="farmerModal" onclick="closeModal(event)">
+  <div class="modal-box" id="farmerModalBox">
+    <div class="modal-head">
+      <h3>Farmer Profile</h3>
+      <button class="modal-close" onclick="closeModal(true)">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-farmer-hero">
+        <div class="modal-farmer-av" id="modalAv" style="background:var(--pale);color:var(--forest)">MR</div>
+        <div>
+          <div class="modal-farmer-name" id="modalName">Mario Santos</div>
+          <div class="modal-farmer-sub" id="modalSub">Brgy. 3 — Taboc · Palay / Rice</div>
+        </div>
+      </div>
+      <div class="info-grid">
+        <div class="info-field"><div class="info-field-label">Mobile</div><div class="info-field-value" id="modalPhone">+63 917 123 4567</div></div>
+        <div class="info-field"><div class="info-field-label">Status</div><div class="info-field-value" id="modalStatus">Pending</div></div>
+        <div class="info-field"><div class="info-field-label">Barangay</div><div class="info-field-value" id="modalBarangay">Brgy. 3 — Taboc</div></div>
+        <div class="info-field"><div class="info-field-label">Primary Crop</div><div class="info-field-value" id="modalCrop">🌾 Palay / Rice</div></div>
+        <div class="info-field"><div class="info-field-label">Farm Area</div><div class="info-field-value" id="modalArea">2.5 ha</div></div>
+        <div class="info-field"><div class="info-field-label">Registered</div><div class="info-field-value" id="modalDate">Apr 1, 2025</div></div>
+        <div class="info-field" style="grid-column:1/-1"><div class="info-field-label">Submitted ID</div><div class="info-field-value" id="modalIdType" style="font-size:13px">—</div></div>
+      </div>
+      <div style="background:var(--fog);border-radius:var(--r-sm);padding:14px;font-size:13px;color:var(--dust);line-height:1.6" id="modalNotes"></div>
+      <div id="modalIdImageSection"></div>
+    </div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<script src="Registration.js"></script>
+<script>
+  // Auto-show admin panel
+  (function(){
+    var panel = document.getElementById('panelAdmin');
+    if(panel) panel.classList.add('active');
+  })();
+
+  // Override logout to redirect to landing
+  window.doLogout = function(){
+    window.location.href = 'index.html';
+  };
+  // Override goLanding
+  window.goLanding = function(){
+    window.location.href = 'index.html';
+  };
+</script>
+</body>
+</html>

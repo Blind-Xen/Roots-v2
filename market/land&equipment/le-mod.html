@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Land & Equipment Market - AgriConnect</title>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { poppins: ['Poppins', 'sans-serif'] },
+                    colors: {
+                        agri: {
+                            50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac',
+                            400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d',
+                            800: '#166534', 900: '#14532d', 950: '#052e16'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="le-styles.css">
+    <link rel="stylesheet" href="../../shared/dropdowns.css">
+    <link rel="stylesheet" href="../../shared/nav.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<div class="toast-box" id="toastBox"></div>
+
+<!-- Confirm Overlay -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-card">
+        <div class="text-4xl mb-3" id="confirmIcon">⚠️</div>
+        <h3 class="text-lg font-bold text-gray-900 mb-1" id="confirmTitle">Are you sure?</h3>
+        <p class="text-sm text-gray-500 mb-6" id="confirmSub"></p>
+        <div class="flex gap-3">
+            <button onclick="confirmCancel()" class="flex-1 py-2.5 border border-gray-200 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50 transition">Cancel</button>
+            <button onclick="confirmOk()" id="confirmOkBtn" class="flex-1 py-2.5 bg-red-500 text-white rounded-xl text-sm font-semibold hover:bg-red-600 transition">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Success Overlay -->
+<div class="confirm-overlay" id="successOverlay">
+    <div class="confirm-card">
+        <div class="text-5xl mb-3">🎉</div>
+        <h3 class="text-lg font-bold text-gray-900 mb-1" id="successTitle">Success!</h3>
+        <p class="text-sm text-gray-500 mb-6" id="successSub"></p>
+        <button onclick="closeConfirm('successOverlay')" class="w-full py-2.5 bg-agri-500 text-white rounded-xl text-sm font-semibold hover:bg-agri-600 transition">Done</button>
+    </div>
+</div>
+
+<!-- Edit Listing Overlay -->
+<div class="edit-overlay" id="editOverlay">
+    <div class="edit-card">
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="text-lg font-bold text-gray-900">Edit Listing</h3>
+            <button onclick="closeConfirm('editOverlay')" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition"><i class="fas fa-times text-gray-400"></i></button>
+        </div>
+        <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1">Title</label><input id="editTitle" type="text" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-agri-500"></div>
+        <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1">Price</label><input id="editPrice" type="text" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-agri-500"></div>
+        <div class="mb-4"><label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select id="editStatus" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-agri-500 bg-white">
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+            </select>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="closeConfirm('editOverlay')" class="flex-1 py-2.5 border border-gray-200 text-gray-600 rounded-xl text-sm font-medium">Cancel</button>
+            <button onclick="saveEditListing()" class="flex-1 py-2.5 bg-agri-500 text-white rounded-xl text-sm font-semibold hover:bg-agri-600 transition">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-bg" id="detailModal"><div class="modal-card" id="modalContent"></div></div>
+
+<!-- Contact Modal -->
+<div class="modal-bg" id="contactModal">
+    <div class="modal-card p-7">
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="text-lg font-bold text-gray-900">Contact Seller</h3>
+            <button onclick="closeModal('contactModal')" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition"><i class="fas fa-times text-gray-400"></i></button>
+        </div>
+        <div class="flex items-center gap-3 mb-5 p-3 bg-agri-50 rounded-xl" id="contactSellerInfo"></div>
+        <div class="flex gap-3">
+            <button onclick="doCall()" class="flex-1 py-3 bg-agri-500 text-white rounded-xl font-semibold text-sm hover:bg-agri-600 transition"><i class="fas fa-phone mr-2"></i>Call</button>
+            <button onclick="doSMS()" class="flex-1 py-3 bg-blue-500 text-white rounded-xl font-semibold text-sm hover:bg-blue-600 transition"><i class="fas fa-comment mr-2"></i>Message</button>
+        </div>
+        <button onclick="closeModal('contactModal')" class="mt-4 w-full text-center text-gray-400 text-sm hover:text-gray-600 transition">Close</button>
+    </div>
+</div>
+
+<!-- Profile Modal -->
+<div class="modal-bg" id="profileModal">
+    <div class="modal-card p-7">
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="text-lg font-bold text-gray-900">My Profile</h3>
+            <button onclick="closeModal('profileModal')" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition"><i class="fas fa-times text-gray-400"></i></button>
+        </div>
+        <div class="p-5 bg-gray-50 rounded-3xl mb-5">
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-full bg-green-500 text-white flex items-center justify-center text-xl font-bold" id="profileAvatarDisplay">KM</div>
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-900" id="profileNameDisplay">Kuya Mario</h4>
+                    <div class="inline-flex items-center gap-2 mt-1 text-sm text-green-700 bg-green-50 px-3 py-1 rounded-full font-semibold">
+                        <i class="fas fa-check-circle"></i>Registered Farmer
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2" id="profilePhoneDisplay">+63 917 555 1234</p>
+                </div>
+            </div>
+        </div>
+        <div class="space-y-4">
+            <button onclick="openPostListing()" class="w-full text-left flex items-center justify-between gap-4 px-5 py-4 bg-white rounded-3xl border border-gray-100 hover:shadow-sm transition">
+                <span><div class="text-sm font-semibold text-gray-900">Post Listing</div><div class="text-xs text-gray-500">Create a new listing for land or equipment</div></span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </button>
+            <button onclick="openMyListings()" class="w-full text-left flex items-center justify-between gap-4 px-5 py-4 bg-white rounded-3xl border border-gray-100 hover:shadow-sm transition">
+                <span><div class="text-sm font-semibold text-gray-900">My Listings</div><div class="text-xs text-gray-500">Manage your posted listings</div></span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </button>
+            <button onclick="openPayments()" class="w-full text-left flex items-center justify-between gap-4 px-5 py-4 bg-white rounded-3xl border border-gray-100 hover:shadow-sm transition">
+                <span><div class="text-sm font-semibold text-gray-900">Payments</div><div class="text-xs text-gray-500">View transaction history</div></span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </button>
+            <button onclick="openProfileInfo()" class="w-full text-left flex items-center justify-between gap-4 px-5 py-4 bg-white rounded-3xl border border-gray-100 hover:shadow-sm transition">
+                <span><div class="text-sm font-semibold text-gray-900">Profile Info</div><div class="text-xs text-gray-500">Edit your personal information</div></span>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </button>
+            <button onclick="doLogout()" class="w-full text-left px-5 py-4 bg-red-50 text-red-600 rounded-3xl border border-red-100 font-semibold hover:bg-red-100 transition">Log Out</button>
+        </div>
+    </div>
+</div>
+
+<!-- Notifications Modal -->
+<div class="modal-bg" id="notificationsModal">
+    <div class="modal-card p-7">
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="text-lg font-bold text-gray-900">Notifications</h3>
+            <button onclick="closeModal('notificationsModal')" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition"><i class="fas fa-times text-gray-400"></i></button>
+        </div>
+        <div id="notifBody" class="space-y-4 text-sm text-gray-700">
+            <button type="button" onclick="openNotificationDetail('inquiry')" class="w-full text-left p-4 bg-gray-50 rounded-3xl border border-gray-100 transition hover:bg-gray-100">
+                <div class="font-semibold text-gray-900">New inquiry received</div>
+                <div class="text-xs text-gray-500 mt-1">Someone asked about your listing for rice land. Reply now to keep the lead engaged.</div>
+                <div class="text-xs text-gray-400 mt-2">2 min ago</div>
+            </button>
+            <button type="button" onclick="openNotificationDetail('approved')" class="w-full text-left p-4 bg-gray-50 rounded-3xl border border-gray-100 transition hover:bg-gray-100">
+                <div class="font-semibold text-gray-900">Listing approved</div>
+                <div class="text-xs text-gray-500 mt-1">Your pumpkin harvester listing is now live in the marketplace.</div>
+                <div class="text-xs text-gray-400 mt-2">1h ago</div>
+            </button>
+            <button type="button" onclick="openNotificationDetail('payment')" class="w-full text-left p-4 bg-gray-50 rounded-3xl border border-gray-100 transition hover:bg-gray-100">
+                <div class="font-semibold text-gray-900">Payment received</div>
+                <div class="text-xs text-gray-500 mt-1">You received a payment for the sugarcane plot rental.</div>
+                <div class="text-xs text-gray-400 mt-2">Yesterday</div>
+            </button>
+        </div>
+        <button onclick="closeModal('notificationsModal')" class="mt-6 w-full py-3 bg-green-500 text-white rounded-xl font-semibold text-sm hover:bg-green-600 transition">Close</button>
+    </div>
+</div>
+
+<!-- Messages Modal -->
+<div class="modal-bg" id="messagesModal">
+    <div class="modal-card p-7">
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="text-lg font-bold text-gray-900" id="msgPanelTitle">Messages</h3>
+            <button onclick="closeModal('messagesModal')" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition"><i class="fas fa-times text-gray-400"></i></button>
+        </div>
+        <div id="msgListView">
+            <div id="msgList" class="space-y-3 text-sm text-gray-700"></div>
+        </div>
+        <div id="msgThreadView" style="display:none">
+            <button type="button" onclick="msgBackToList()" class="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-4"><i class="fas fa-arrow-left"></i> Back</button>
+            <div id="msgThread" class="space-y-3 max-h-64 overflow-y-auto mb-4 pr-1"></div>
+            <div class="flex gap-2">
+                <input id="chatInput" type="text" placeholder="Type a message..." class="flex-1 px-4 py-2.5 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-agri-500">
+                <button onclick="sendChatMessage()" class="w-10 h-10 rounded-full bg-agri-500 text-white flex items-center justify-center hover:bg-agri-600 transition"><i class="fas fa-paper-plane text-xs"></i></button>
+            </div>
+        </div>
+        <button id="msgCloseBtn" onclick="closeModal('messagesModal')" class="mt-6 w-full py-3 bg-blue-500 text-white rounded-xl font-semibold text-sm hover:bg-blue-600 transition">Close</button>
+    </div>
+</div>
+
+<!-- Page Modal (Post Listing / My Listings / Payments / Profile Info) -->
+<div class="modal-bg" id="pageModal">
+    <div class="modal-card p-7">
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="text-lg font-bold text-gray-900" id="pageModalTitle">Details</h3>
+            <button onclick="closeModal('pageModal')" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition"><i class="fas fa-times text-gray-400"></i></button>
+        </div>
+        <div id="pageModalBody" class="text-sm text-gray-700"></div>
+    </div>
+</div>
+
+<!-- Rent Modal -->
+<div class="modal-bg" id="rentModal">
+    <div class="modal-card p-7">
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="text-lg font-bold text-gray-900">Request to Rent</h3>
+            <button onclick="closeModal('rentModal')" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition"><i class="fas fa-times text-gray-400"></i></button>
+        </div>
+        <div class="bg-agri-50 rounded-xl p-3 mb-5 flex items-center gap-3" id="rentItemInfo"></div>
+        <form onsubmit="submitRent(event)">
+            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label><input type="text" required placeholder="Your full name" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-agri-500 focus:ring-2 focus:ring-agri-500/20"></div>
+            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1">Phone</label><input type="tel" required placeholder="+63 9XX XXX XXXX" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-agri-500 focus:ring-2 focus:ring-agri-500/20"></div>
+            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1">Duration</label><select required class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-agri-500 focus:ring-2 focus:ring-agri-500/20 bg-white"><option value="">Select duration</option><option>1 Year</option><option>2 Years</option><option>3 Years</option><option>5 Years</option></select></div>
+            <div class="mb-4"><label class="block text-sm font-medium text-gray-700 mb-1">Message</label><textarea rows="2" placeholder="Additional details..." class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-agri-500 focus:ring-2 focus:ring-agri-500/20 resize-none"></textarea></div>
+            <button type="submit" class="w-full py-3 bg-agri-500 text-white rounded-xl font-semibold text-sm hover:bg-agri-600 transition"><i class="fas fa-paper-plane mr-2"></i>Submit Request</button>
+        </form>
+    </div>
+</div>
+
+<!-- Exchange Modal -->
+<div class="modal-bg" id="exchangeModal">
+    <div class="modal-card p-7">
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="text-lg font-bold text-gray-900">Propose Exchange</h3>
+            <button onclick="closeModal('exchangeModal')" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition"><i class="fas fa-times text-gray-400"></i></button>
+        </div>
+        <div class="bg-orange-50 rounded-xl p-3 mb-5 flex items-center gap-3" id="exchangeItemInfo"></div>
+        <form onsubmit="submitExchange(event)">
+            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1">What do you offer?</label><input type="text" required placeholder="Describe what you want to exchange" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-agri-500 focus:ring-2 focus:ring-agri-500/20"></div>
+            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1">Estimated Value</label><input type="text" required placeholder="e.g. P500,000 or 2 carabaos" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-agri-500 focus:ring-2 focus:ring-agri-500/20"></div>
+            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1">Your Name</label><input type="text" required placeholder="Full name" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-agri-500 focus:ring-2 focus:ring-agri-500/20"></div>
+            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label><input type="tel" required placeholder="+63 9XX XXX XXXX" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-agri-500 focus:ring-2 focus:ring-agri-500/20"></div>
+            <div class="mb-4"><label class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label><textarea rows="2" placeholder="Any conditions..." class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-agri-500 focus:ring-2 focus:ring-agri-500/20 resize-none"></textarea></div>
+            <button type="submit" class="w-full py-3 bg-orange-500 text-white rounded-xl font-semibold text-sm hover:bg-orange-600 transition"><i class="fas fa-exchange-alt mr-2"></i>Propose Exchange</button>
+        </form>
+    </div>
+</div>
+
+<!-- Header -->
+<section class="bg-white border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-5">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Land & Equipment Market</h1>
+                <p class="text-sm text-gray-500 mt-1" id="listingCountText">Browse 12 listings from verified sellers across the region</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="goHome()" class="p-3 bg-gray-100 rounded-2xl hover:bg-gray-200 transition"><i class="fas fa-home text-gray-600"></i></button>
+                <button type="button" onclick="showNotifications()" class="relative p-3 bg-gray-100 rounded-2xl hover:bg-gray-200 transition">
+                    <i class="fas fa-bell text-gray-600"></i>
+                    <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-white" id="notifDot"></span>
+                </button>
+                <button type="button" onclick="openMessages()" class="relative p-3 bg-gray-100 rounded-2xl hover:bg-gray-200 transition">
+                    <i class="fas fa-comment text-gray-600"></i>
+                    <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-white" id="msgDot"></span>
+                </button>
+                <button type="button" onclick="openProfile()" class="p-3 bg-gray-100 rounded-2xl hover:bg-gray-200 transition"><i class="fas fa-user text-gray-600"></i></button>
+            </div>
+        </div>
+        <div class="mt-5 grid grid-cols-1 lg:grid-cols-[1.5fr_0.9fr_0.9fr] gap-3">
+            <div class="search-wrap flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-2xl bg-white shadow-sm">
+                <i class="fas fa-search text-gray-400"></i>
+                <input type="text" id="searchInput" placeholder="Search by name, location, or keyword..." class="bg-transparent w-full text-sm text-gray-700 outline-none" oninput="doSearch()">
+            </div>
+            <select id="typeSelect" class="sort-select text-sm border border-gray-200 rounded-2xl px-4 py-3 bg-white w-full focus:outline-none" onchange="applyFilters()">
+                <option value="all">All Types</option>
+                <option value="sale">For Sale</option>
+                <option value="rent">For Rent</option>
+                <option value="exchange">Exchange</option>
+            </select>
+            <select id="categorySelect" class="sort-select text-sm border border-gray-200 rounded-2xl px-4 py-3 bg-white w-full focus:outline-none" onchange="applyFilters()">
+                <option value="all">All Categories</option>
+                <option value="equipment">Equipment</option>
+                <option value="land">Land</option>
+                <option value="farm">Farm</option>
+            </select>
+        </div>
+    </div>
+</section>
+
+<!-- Listings Grid -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 py-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="listingsGrid"></div>
+    <div class="hidden text-center py-16" id="noResults">
+        <i class="fas fa-search text-gray-300 text-5xl mb-4"></i>
+        <p class="text-gray-400 font-medium">No listings found matching your criteria</p>
+        <button onclick="resetFilters()" class="mt-3 text-agri-600 text-sm font-medium hover:text-agri-700">Reset Filters</button>
+    </div>
+</section>
+  <script src="../../shared/nav.js"></script>
+  <script src="../../shared/routes.js"></script>
+  <script src="../../shared/base.js"></script>
+  <script src="../../shared/userdd.js"></script>
+  <script src="../../shared/notify.js"></script>
+  <script src="skeleton.js"></script>
+  <script src="le-script.js" defer></script>
+  <script>
+    initNotifications({ fakeData: true });
+    Base.resolveAll();
+  </script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roots – Fruits &amp; Vegetables</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../../../shared/nav.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<!-- Yanoyan 6 footer -->
+</header>
+
+<!-- Mobile nav overlay -->
+<div class="mobile-overlay hidden" id="mobileOverlay" onclick="toggleMobileNav()"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="page-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="ph-left">
+      <div class="ph-icon-wrap"><i class="fas fa-apple-alt"></i></div>
+      <div>
+        <h1 class="ph-title">Fruits &amp; Vegetables</h1>
+        <p class="ph-sub">Fresh produce from DA-verified farmers in Oroquieta City</p>
+      </div>
+    </div>
+    <div class="ph-actions">
+      <button class="btn-secondary" onclick="openInquiriesModal()">
+        <i class="fas fa-inbox"></i> My Inquiries
+      </button>
+      <button class="btn-primary" onclick="openAddListingModal()">
+        <i class="fas fa-plus"></i> Post Produce
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Strip -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-ic green"><i class="fas fa-store"></i></div>
+      <div><div class="stat-num" id="statListings">—</div><div class="stat-lbl">Active Listings</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-ic amber"><i class="fas fa-users"></i></div>
+      <div><div class="stat-num" id="statFarmers">—</div><div class="stat-lbl">Verified Farmers</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-ic leaf"><i class="fas fa-apple-alt"></i></div>
+      <div><div class="stat-num" id="statFruits">—</div><div class="stat-lbl">Fruit Varieties</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-ic soil"><i class="fas fa-carrot"></i></div>
+      <div><div class="stat-num" id="statVeggies">—</div><div class="stat-lbl">Vegetable Varieties</div></div>
+    </div>
+  </div>
+
+  <!-- Search & Filter -->
+  <div class="filter-bar">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Search produce, farmer name..." oninput="handleSearch()">
+      <button class="search-clear hidden" id="searchClear" onclick="clearSearch()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="filter-chips">
+      <button class="chip active" onclick="setCategory('all',this)">All</button>
+      <button class="chip" onclick="setCategory('fruit',this)"><i class="fas fa-apple-alt"></i> Fruits</button>
+      <button class="chip" onclick="setCategory('vegetable',this)"><i class="fas fa-carrot"></i> Vegetables</button>
+      <button class="chip" onclick="setCategory('root',this)"><i class="fas fa-seedling"></i> Root Crops</button>
+    </div>
+    <select id="sortSelect" class="sort-select" onchange="handleSort()">
+      <option value="newest">Newest First</option>
+      <option value="price_asc">Price: Low → High</option>
+      <option value="price_desc">Price: High → Low</option>
+    </select>
+  </div>
+
+  <!-- Main Layout -->
+  <div class="main-layout">
+
+    <!-- LEFT: Products -->
+    <div class="listings-col">
+      <div class="view-toggle-row">
+        <span class="results-count" id="resultsCount">Loading...</span>
+        <div class="view-btns">
+          <button class="vb active" id="vtGrid" onclick="setView('grid',this)" title="Grid"><i class="fas fa-th-large"></i></button>
+          <button class="vb" id="vtList" onclick="setView('list',this)" title="List"><i class="fas fa-list"></i></button>
+        </div>
+      </div>
+
+      <div class="products-grid" id="productsGrid">
+        <!-- skeleton loaders -->
+        <div class="skel-card"></div>
+        <div class="skel-card"></div>
+        <div class="skel-card"></div>
+        <div class="skel-card"></div>
+        <div class="skel-card"></div>
+        <div class="skel-card"></div>
+      </div>
+
+      <div class="empty-state hidden" id="emptyState">
+        <div class="es-icon">🌱</div>
+        <div class="es-title">No produce found</div>
+        <div class="es-sub">Try a different search or be the first to post!</div>
+        <button class="btn-primary" onclick="openAddListingModal()"><i class="fas fa-plus"></i> Post Produce</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Side Panels -->
+    <div class="side-col">
+
+      <!-- Farmer Shops -->
+      <div class="side-panel">
+        <div class="sp-head">
+          <h3><i class="fas fa-store"></i> Farmer Shops</h3>
+          <span class="sp-count" id="farmerCount">—</span>
+        </div>
+        <div class="farmer-list" id="farmerList">
+          <div class="farmer-skel"></div>
+          <div class="farmer-skel"></div>
+          <div class="farmer-skel"></div>
+        </div>
+      </div>
+
+      <!-- Market Prices -->
+      <div class="side-panel">
+        <div class="sp-head">
+          <h3><i class="fas fa-chart-line"></i> Today's Prices</h3>
+          <span class="sp-sub">DA Market Info</span>
+        </div>
+        <div class="price-list">
+          <div class="price-row"><div class="pr-name"><span>🍅</span> Kamatis</div><div class="pr-val">₱65/kg <span class="tr up">▲</span></div></div>
+          <div class="price-row"><div class="pr-name"><span>🫑</span> Ampalaya</div><div class="pr-val">₱80/kg <span class="tr up">▲</span></div></div>
+          <div class="price-row"><div class="pr-name"><span>🫘</span> Sitaw</div><div class="pr-val">₱75/kg <span class="tr up">▲</span></div></div>
+          <div class="price-row"><div class="pr-name"><span>🍌</span> Saging</div><div class="pr-val">₱30/kg <span class="tr down">▼</span></div></div>
+          <div class="price-row"><div class="pr-name"><span>🥬</span> Kangkong</div><div class="pr-val">₱40/kg <span class="tr neutral">—</span></div></div>
+          <div class="price-row"><div class="pr-name"><span>🍈</span> Papaya</div><div class="pr-val">₱25/kg <span class="tr neutral">—</span></div></div>
+        </div>
+        <div class="price-src"><i class="fas fa-info-circle"></i> Via DA Market Information (placeholder)</div>
+      </div>
+
+      <!-- DA Advisories -->
+      <div class="side-panel advisory-sp">
+        <div class="sp-head">
+          <h3><i class="fas fa-landmark"></i> DA Advisories</h3>
+        </div>
+        <div class="adv-list">
+          <div class="adv-item warning">
+            <div class="adv-ic"><i class="fas fa-bug"></i></div>
+            <div class="adv-body"><div class="adv-title">Aphid Alert</div><div class="adv-sub">Apply neem oil. Monitor leafy vegetables Apr 12–20.</div></div>
+          </div>
+          <div class="adv-item info">
+            <div class="adv-ic"><i class="fas fa-cloud-rain"></i></div>
+            <div class="adv-body"><div class="adv-title">Incoming Rain</div><div class="adv-sub">Hold irrigation Apr 15–17 for all crops.</div></div>
+          </div>
+          <div class="adv-item success">
+            <div class="adv-ic"><i class="fas fa-seedling"></i></div>
+            <div class="adv-body"><div class="adv-title">Free Seedlings</div><div class="adv-sub">DA distributing pechay & sitaw. Apr 20, 8AM.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- ===== FARMER SHOP MODAL ===== -->
+<div class="modal hidden" id="shopModal">
+  <div class="modal-box wide">
+    <button class="modal-close" onclick="closeShopModal()"><i class="fas fa-times"></i></button>
+    <div id="shopModalContent"></div>
+  </div>
+</div>
+
+<!-- ===== ADD LISTING MODAL ===== -->
+<div class="modal hidden" id="addListingModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeAddListingModal()"><i class="fas fa-times"></i></button>
+    <h3 class="modal-title"><i class="fas fa-plus-circle"></i> Post Produce Listing</h3>
+    <div class="form-group">
+      <label>Category</label>
+      <select id="formCategory">
+        <option value="">-- Select category --</option>
+        <option value="fruit">🍎 Fruit</option>
+        <option value="vegetable">🥦 Vegetable</option>
+        <option value="root">🥔 Root Crop</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Produce Name</label>
+      <input type="text" id="formName" placeholder="e.g. Kamatis, Sitaw, Langka...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Price per kg (₱)</label>
+        <input type="number" id="formPrice" placeholder="e.g. 65">
+      </div>
+      <div class="form-group">
+        <label>Available (kg)</label>
+        <input type="number" id="formQty" placeholder="e.g. 50">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Pickup Location</label>
+      <input type="text" id="formLocation" placeholder="e.g. Brgy. Pines, Purok 2">
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="formDesc" placeholder="Freshness, variety, notes for buyers..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Photo <span style="font-weight:400;color:#aaa">(optional)</span></label>
+      <div class="upload-box" id="uploadBox" onclick="document.getElementById('formPhoto').click()">
+        <div class="upload-preview hidden" id="uploadPreview">
+          <img id="previewImg" src="" alt="preview">
+          <button class="upload-remove" onclick="removePhoto(event)"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="upload-placeholder" id="uploadPlaceholder">
+          <i class="fas fa-camera"></i>
+          <span>Tap to add a photo</span>
+          <small>JPG, PNG up to 5MB</small>
+        </div>
+      </div>
+      <input type="file" id="formPhoto" accept="image/*" style="display:none" onchange="previewPhoto(event)">
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" onclick="closeAddListingModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitListing()"><i class="fas fa-check"></i> Post Listing</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== INQUIRY MODAL ===== -->
+<div class="modal hidden" id="inquiryModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeInquiryModal()"><i class="fas fa-times"></i></button>
+    <h3 class="modal-title"><i class="fas fa-envelope"></i> Send Inquiry to Farmer</h3>
+    <div class="inquiry-product-preview" id="inquiryPreview"></div>
+    <input type="hidden" id="inquiryListingId">
+    <div class="form-group">
+      <label>How many kg do you need?</label>
+      <input type="number" id="inquiryQty" placeholder="e.g. 10">
+    </div>
+    <div class="form-group">
+      <label>Message to Farmer</label>
+      <textarea id="inquiryMsg" placeholder="Ask about freshness, delivery, pickup arrangement..."></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" onclick="closeInquiryModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitInquiry()"><i class="fas fa-paper-plane"></i> Send Inquiry</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PRODUCT DETAIL MODAL ===== -->
+<div class="modal hidden" id="productDetailModal">
+  <div class="modal-box wide">
+    <button class="modal-close" onclick="closeProductDetailModal()"><i class="fas fa-times"></i></button>
+    <div id="productDetailContent"></div>
+  </div>
+</div>
+
+<!-- ===== MY INQUIRIES MODAL ===== -->
+<div class="modal hidden" id="inquiriesModal">
+  <div class="modal-box wide">
+    <button class="modal-close" onclick="closeInquiriesModal()"><i class="fas fa-times"></i></button>
+    <h3 class="modal-title"><i class="fas fa-inbox"></i> Received Inquiries</h3>
+    <div id="inquiriesContent">
+      <div class="inq-loading"><i class="fas fa-spinner fa-spin"></i> Loading inquiries...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EDIT LISTING MODAL ===== -->
+<div class="modal hidden" id="editListingModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeEditListingModal()"><i class="fas fa-times"></i></button>
+    <h3 class="modal-title"><i class="fas fa-edit"></i> Edit Listing</h3>
+    <input type="hidden" id="editListingId">
+    <div class="form-group">
+      <label>Produce Name</label>
+      <input type="text" id="editName" placeholder="e.g. Kamatis">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Price per kg (₱)</label>
+        <input type="number" id="editPrice" placeholder="e.g. 65">
+      </div>
+      <div class="form-group">
+        <label>Available (kg)</label>
+        <input type="number" id="editQty" placeholder="e.g. 50">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Pickup Location</label>
+      <input type="text" id="editLocation" placeholder="e.g. Brgy. Pines, Purok 2">
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="editDesc" placeholder="Freshness, variety, notes..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="editStatus">
+        <option value="active">Active</option>
+        <option value="sold out">Sold Out</option>
+        <option value="removed">Remove Listing</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" onclick="closeEditListingModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitEditListing()"><i class="fas fa-save"></i> Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../../shared/nav.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

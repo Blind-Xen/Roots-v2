@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TanimBase Admin</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../tanim/tanim/tanimbase.css">
+  <link rel="stylesheet" href="tanim-admin.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="adm-sidebar" id="adm-sidebar">
+  <div class="adm-sidebar-top">
+    <div class="adm-brand">
+      <div>
+        <div class="adm-brand-name">TanimBase</div>
+        <div class="adm-brand-role">Admin Panel</div>
+      </div>
+    </div>
+
+    <nav class="adm-nav">
+      <div class="adm-nav-label">Manage</div>
+      <a class="adm-nav-item active" onclick="switchTab('plants')" href="#">
+        <i class="material-icons">eco</i>
+        <span>Plants</span>
+        <span class="adm-nav-badge" id="nav-badge-plants">—</span>
+      </a>
+      <a class="adm-nav-item" onclick="switchTab('categories')" href="#">
+        <i class="material-icons">label</i>
+        <span>Categories</span>
+      </a>
+      <a class="adm-nav-item" onclick="switchTab('settings')" href="#">
+        <i class="material-icons">tune</i>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="adm-nav-label" style="margin-top:24px;">Filter by Category</div>
+    <div class="adm-filters" id="adm-filters">
+      <button class="adm-filter active" data-filter="all" onclick="setAdminFilter('all',this)">
+        <span class="adm-filter-dot" style="background:#4CAF50"></span> All Plants
+      </button>
+      <button class="adm-filter" data-filter="medicinal" onclick="setAdminFilter('medicinal',this)">
+        <span class="adm-filter-dot" style="background:#00796b"></span> Medicinal
+      </button>
+      <button class="adm-filter" data-filter="edible" onclick="setAdminFilter('edible',this)">
+        <span class="adm-filter-dot" style="background:#388e3c"></span> Edible
+      </button>
+      <button class="adm-filter" data-filter="crop" onclick="setAdminFilter('crop',this)">
+        <span class="adm-filter-dot" style="background:#f57f17"></span> Crop
+      </button>
+      <button class="adm-filter" data-filter="ornamental" onclick="setAdminFilter('ornamental',this)">
+        <span class="adm-filter-dot" style="background:#c2185b"></span> Ornamental
+      </button>
+      <button class="adm-filter" data-filter="timber" onclick="setAdminFilter('timber',this)">
+        <span class="adm-filter-dot" style="background:#5d4037"></span> Timber
+      </button>
+      <button class="adm-filter" data-filter="aromatic" onclick="setAdminFilter('aromatic',this)">
+        <span class="adm-filter-dot" style="background:#7b1fa2"></span> Aromatic
+      </button>
+    </div>
+
+    <div class="adm-stats-block">
+      <div class="adm-stat">
+        <span class="adm-stat-num" id="s-total">—</span>
+        <span class="adm-stat-lbl">Total</span>
+      </div>
+      <div class="adm-stat">
+        <span class="adm-stat-num" id="s-med">—</span>
+        <span class="adm-stat-lbl">Medicinal</span>
+      </div>
+      <div class="adm-stat">
+        <span class="adm-stat-num" id="s-edible">—</span>
+        <span class="adm-stat-lbl">Edible</span>
+      </div>
+      <div class="adm-stat">
+        <span class="adm-stat-num" id="s-crop">—</span>
+        <span class="adm-stat-lbl">Crop</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="adm-sidebar-bottom">
+    <a href="../../tanim/tanim/tanimbase.html" class="adm-view-user">
+      <i class="material-icons">visibility</i> View as User
+    </a>
+  </div>
+</aside>
+
+<!-- SIDEBAR TOGGLE (mobile) -->
+<button class="adm-sidebar-toggle" id="sidebar-toggle" onclick="toggleAdminSidebar()">
+  <i class="material-icons">menu</i>
+</button>
+<div class="adm-sidebar-backdrop" id="sidebar-backdrop" onclick="toggleAdminSidebar()"></div>
+
+<!-- MAIN -->
+<main class="adm-main">
+
+  <!-- TOP BAR -->
+  <div class="adm-topbar">
+    <div class="adm-topbar-left">
+      <div class="adm-search-wrap">
+        <i class="material-icons">search</i>
+        <input type="search" id="admin-search" placeholder="Search plants…"
+               oninput="handleAdminSearch(this.value)" autocomplete="off">
+      </div>
+    </div>
+    <div class="adm-topbar-right">
+      <button class="adm-btn-primary" onclick="openAddModal()">
+        <i class="material-icons">add</i> Add Plant
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB: PLANTS -->
+  <div class="adm-tab-content active" id="tab-plants">
+    <div class="adm-results-meta" id="adm-results-meta"></div>
+
+    <div id="adm-loading" class="adm-loading">
+      <span class="adm-spinner"></span> Loading plants…
+    </div>
+
+    <div class="adm-plant-grid" id="adm-plant-grid"></div>
+
+    <div class="adm-empty" id="adm-empty" style="display:none;">
+      <i class="material-icons">yard</i>
+      <p>No plants found.</p>
+      <button class="adm-btn-primary" onclick="openAddModal()">
+        <i class="material-icons">add</i> Add First Plant
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB: CATEGORIES -->
+  <div class="adm-tab-content" id="tab-categories">
+    <div class="adm-section-title">Plant Categories</div>
+    <div class="adm-categories-grid">
+      <div class="adm-cat-card" style="--cat-color:#00796b">
+        <div class="adm-cat-icon"><i class="material-icons">medication</i></div>
+        <div class="adm-cat-name">Medicinal</div>
+        <div class="adm-cat-desc">Plants used in traditional and alternative medicine</div>
+        <div class="adm-cat-count" id="cat-medicinal">— plants</div>
+      </div>
+      <div class="adm-cat-card" style="--cat-color:#388e3c">
+        <div class="adm-cat-icon"><i class="material-icons">restaurant</i></div>
+        <div class="adm-cat-name">Edible</div>
+        <div class="adm-cat-desc">Plants with edible parts for food and nutrition</div>
+        <div class="adm-cat-count" id="cat-edible">— plants</div>
+      </div>
+      <div class="adm-cat-card" style="--cat-color:#f57f17">
+        <div class="adm-cat-icon"><i class="material-icons">agriculture</i></div>
+        <div class="adm-cat-name">Crop</div>
+        <div class="adm-cat-desc">Commercially grown crops for agricultural production</div>
+        <div class="adm-cat-count" id="cat-crop">— plants</div>
+      </div>
+      <div class="adm-cat-card" style="--cat-color:#c2185b">
+        <div class="adm-cat-icon"><i class="material-icons">local_florist</i></div>
+        <div class="adm-cat-name">Ornamental</div>
+        <div class="adm-cat-desc">Decorative plants used for landscaping and gardens</div>
+        <div class="adm-cat-count" id="cat-ornamental">— plants</div>
+      </div>
+      <div class="adm-cat-card" style="--cat-color:#5d4037">
+        <div class="adm-cat-icon"><i class="material-icons">forest</i></div>
+        <div class="adm-cat-name">Timber</div>
+        <div class="adm-cat-desc">Trees valued for their wood and timber production</div>
+        <div class="adm-cat-count" id="cat-timber">— plants</div>
+      </div>
+      <div class="adm-cat-card" style="--cat-color:#7b1fa2">
+        <div class="adm-cat-icon"><i class="material-icons">spa</i></div>
+        <div class="adm-cat-name">Aromatic</div>
+        <div class="adm-cat-desc">Fragrant plants used in perfumery and aromatherapy</div>
+        <div class="adm-cat-count" id="cat-aromatic">— plants</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: SETTINGS -->
+  <div class="adm-tab-content" id="tab-settings">
+    <div class="adm-section-title">System Settings</div>
+    <div class="adm-settings-list">
+      <div class="adm-settings-group">
+        <div class="adm-settings-group-label">Database</div>
+        <div class="adm-setting-row">
+          <div>
+            <div class="adm-setting-name">Connection Status</div>
+            <div class="adm-setting-desc">Current database connection health</div>
+          </div>
+          <span class="adm-status-badge success" id="db-status">Checking…</span>
+        </div>
+        <div class="adm-setting-row">
+          <div>
+            <div class="adm-setting-name">Total Records</div>
+            <div class="adm-setting-desc">Number of plant entries in the database</div>
+          </div>
+          <span class="adm-setting-value" id="db-count">—</span>
+        </div>
+      </div>
+      <div class="adm-settings-group">
+        <div class="adm-settings-group-label">Admin Access</div>
+        <div class="adm-setting-row">
+          <div>
+            <div class="adm-setting-name">Admin Password</div>
+            <div class="adm-setting-desc">Password required to access this admin panel</div>
+          </div>
+          <span class="adm-setting-value">••••••••</span>
+        </div>
+        <div class="adm-setting-row">
+          <div>
+            <div class="adm-setting-name">Access Level</div>
+            <div class="adm-setting-desc">Role assigned to this admin session</div>
+          </div>
+          <span class="adm-status-badge info">Full Access</span>
+        </div>
+      </div>
+      <div class="adm-settings-group">
+        <div class="adm-settings-group-label">Module Info</div>
+        <div class="adm-setting-row">
+          <div>
+            <div class="adm-setting-name">Module</div>
+            <div class="adm-setting-desc">TanimBase — Philippine Plant Information System</div>
+          </div>
+          <span class="adm-setting-value">v1.0</span>
+        </div>
+        <div class="adm-setting-row">
+          <div>
+            <div class="adm-setting-name">Part of</div>
+            <div class="adm-setting-desc">Roots Platform · Oroquieta City DA</div>
+          </div>
+          <span class="adm-setting-value">Module 6</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ADD / EDIT DRAWER -->
+<div class="adm-drawer-backdrop" id="drawer-backdrop" onclick="closeDrawer()"></div>
+<div class="adm-drawer" id="adm-drawer">
+  <div class="adm-drawer-header">
+    <div>
+      <div class="adm-drawer-title" id="drawer-title">Add New Plant</div>
+      <div class="adm-drawer-sub" id="drawer-sub">Fill in the plant details below</div>
+    </div>
+    <button class="adm-drawer-close" onclick="closeDrawer()">
+      <i class="material-icons">close</i>
+    </button>
+  </div>
+
+  <form id="plant-form" onsubmit="submitForm(event)" enctype="multipart/form-data" class="adm-drawer-form">
+    <input type="hidden" id="field-id">
+
+    <!-- PLANT PHOTO -->
+    <div class="adm-form-section">
+      <div class="adm-form-section-label">Plant Photo</div>
+      <div class="adm-field">
+        <div class="upload-area" id="upload-area"
+             ondragover="handleDragOver(event)"
+             ondragleave="handleDragLeave(event)"
+             ondrop="handleDrop(event)">
+
+          <div class="upload-idle" id="upload-idle">
+            <i class="material-icons upload-cloud">cloud_upload</i>
+            <div class="upload-main-text">Drop file here to upload</div>
+            <div class="upload-sub-text">or
+              <span class="upload-browse-link"
+                    onclick="document.getElementById('field-image').click()">browse</span>
+              · JPG, PNG, WEBP · Max 5MB
+            </div>
+          </div>
+
+          <div class="upload-preview" id="upload-preview" style="display:none;">
+            <div class="upload-preview-inner">
+              <img id="upload-preview-img" src="" alt="Preview" class="upload-preview-thumb">
+              <span class="upload-filename-badge" id="upload-preview-name"></span>
+            </div>
+            <button type="button" class="upload-clear-btn" onclick="clearImageUpload(event)">
+              <i class="material-icons" style="font-size:13px;">close</i> Remove
+            </button>
+          </div>
+        </div>
+        <input type="file" id="field-image" name="image"
+               accept="image/jpeg,image/png,image/webp"
+               style="display:none;" onchange="handleFileSelect(this)">
+      </div>
+
+      <div class="adm-field" id="current-image-wrap" style="display:none;margin-top:10px;">
+        <label>Current Photo</label>
+        <img id="current-image-preview" src="" alt="Current plant photo"
+             style="width:120px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd;">
+        <span class="adm-hint">Upload a new photo above to replace this one.</span>
+      </div>
+    </div>
+
+    <!-- BASIC INFO -->
+    <div class="adm-form-section">
+      <div class="adm-form-section-label">Basic Info</div>
+      <div class="adm-form-row">
+        <div class="adm-field">
+          <label>Local Name <span class="req">*</span></label>
+          <input type="text" id="field-local-name" placeholder="e.g. Malunggay" required>
+        </div>
+        <div class="adm-field">
+          <label>Scientific Name <span class="req">*</span></label>
+          <input type="text" id="field-sci-name" placeholder="e.g. Moringa oleifera" required>
+        </div>
+      </div>
+      <div class="adm-form-row">
+        <div class="adm-field">
+          <label>Family <span class="req">*</span></label>
+          <input type="text" id="field-family" placeholder="e.g. Moringaceae" required>
+        </div>
+        <div class="adm-field">
+          <label>Also Known As</label>
+          <input type="text" id="field-also-known" placeholder="Separate with commas">
+        </div>
+      </div>
+      <div class="adm-form-row">
+        <div class="adm-field">
+          <label>Emoji</label>
+          <input type="text" id="field-emoji" placeholder="e.g. 🌿">
+          <span class="adm-hint">Placeholder until photo is added.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="adm-form-section">
+      <div class="adm-form-section-label">Categories</div>
+      <div class="adm-tag-checks">
+        <label><input type="checkbox" name="tags" value="medicinal"><span>💊 Medicinal</span></label>
+        <label><input type="checkbox" name="tags" value="edible"><span>🥗 Edible</span></label>
+        <label><input type="checkbox" name="tags" value="crop"><span>🌾 Crop</span></label>
+        <label><input type="checkbox" name="tags" value="ornamental"><span>🌸 Ornamental</span></label>
+        <label><input type="checkbox" name="tags" value="timber"><span>🪵 Timber</span></label>
+        <label><input type="checkbox" name="tags" value="aromatic"><span>🌺 Aromatic</span></label>
+      </div>
+    </div>
+
+    <!-- DESCRIPTION & USES -->
+    <div class="adm-form-section">
+      <div class="adm-form-section-label">Description & Uses</div>
+      <div class="adm-field">
+        <label>Description <span class="req">*</span></label>
+        <textarea id="field-description" placeholder="Describe the plant…" required></textarea>
+      </div>
+      <div class="adm-field" style="margin-top:12px;">
+        <label>Uses / Benefits <span class="req">*</span></label>
+        <textarea id="field-uses" placeholder="One use per line…"
+                  required style="min-height:90px;"></textarea>
+        <span class="adm-hint">Enter each use on a new line</span>
+      </div>
+      <div class="adm-field" style="margin-top:12px;">
+        <label>Warnings / Cautions</label>
+        <textarea id="field-warnings" placeholder="Leave blank if none…"
+                  style="min-height:50px;"></textarea>
+      </div>
+    </div>
+
+    <!-- CARE GUIDE -->
+    <div class="adm-form-section">
+      <div class="adm-form-section-label">Care Guide</div>
+      <div class="adm-form-row">
+        <div class="adm-field">
+          <label>Watering</label>
+          <input type="text" id="field-water" placeholder="e.g. Low — drought tolerant">
+        </div>
+        <div class="adm-field">
+          <label>Sunlight</label>
+          <input type="text" id="field-light" placeholder="e.g. Full sun">
+        </div>
+      </div>
+      <div class="adm-form-row">
+        <div class="adm-field">
+          <label>Soil Type</label>
+          <input type="text" id="field-soil" placeholder="e.g. Well-draining sandy loam">
+        </div>
+        <div class="adm-field">
+          <label>Growth Rate</label>
+          <input type="text" id="field-growth" placeholder="e.g. Fast">
+        </div>
+      </div>
+      <div class="adm-form-row">
+        <div class="adm-field">
+          <label>Difficulty</label>
+          <select id="field-difficulty">
+            <option value="">— Select —</option>
+            <option value="Very easy">Very Easy</option>
+            <option value="Easy">Easy</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Hard">Hard</option>
+          </select>
+        </div>
+        <div class="adm-field">
+          <label>Regions
+            <span style="font-weight:400;font-size:11px;color:var(--dust);">(select all that apply)</span>
+          </label>
+          <div class="region-combobox" id="region-combobox" onclick="focusRegionInput()">
+            <div class="region-pills" id="region-pills"></div>
+            <input type="text" id="region-search-input"
+                   placeholder="Type to search regions…"
+                   autocomplete="off"
+                   oninput="filterRegions(this.value)"
+                   onfocus="openRegionDropdown()"
+                   onclick="event.stopPropagation()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK FACTS -->
+    <div class="adm-form-section">
+      <div class="adm-form-section-label">Quick Facts</div>
+      <div class="adm-form-row">
+        <div class="adm-field">
+          <label>Height</label>
+          <input type="text" id="field-height" placeholder="e.g. 3–12 meters">
+        </div>
+        <div class="adm-field">
+          <label>Lifespan</label>
+          <input type="text" id="field-lifespan" placeholder="e.g. Perennial">
+        </div>
+      </div>
+      <div class="adm-form-row">
+        <div class="adm-field">
+          <label>Flower Color</label>
+          <input type="text" id="field-flower-color" placeholder="e.g. White / Cream">
+        </div>
+        <div class="adm-field">
+          <label>Harvest Time</label>
+          <input type="text" id="field-harvest-time" placeholder="e.g. Year-round">
+        </div>
+      </div>
+      <div class="adm-field" style="margin-top:10px;">
+        <label>🎬 Video Tutorial URL</label>
+        <input type="url" id="field-video-url"
+               placeholder="e.g. https://www.youtube.com/watch?v=...">
+        <span class="adm-hint">Optional. YouTube or any video link for this plant's tutorial.</span>
+      </div>
+    </div>
+
+    <!-- DETAILED CARE GUIDE -->
+    <div class="adm-form-section">
+      <div class="adm-form-section-label">📋 Detailed Care Guide</div>
+      <p style="font-size:11.5px;color:var(--dust);margin-bottom:12px;margin-top:-4px;">
+        Write detailed paragraphs for each section. These show below the
+        quick care cards on the plant detail page. All fields are optional.
+      </p>
+      <div class="adm-field">
+        <label>🌱 Planting Guide</label>
+        <textarea id="field-care-planting"
+          placeholder="Describe how to plant this — location, soil prep, hole depth, spacing, container options…"
+          style="min-height:100px;"></textarea>
+      </div>
+      <div class="adm-field" style="margin-top:12px;">
+        <label>💧 Watering Guide</label>
+        <textarea id="field-care-watering"
+          placeholder="Describe watering frequency, how to check soil moisture, dry season tips…"
+          style="min-height:100px;"></textarea>
+      </div>
+      <div class="adm-field" style="margin-top:12px;">
+        <label>✂️ Pruning Guide</label>
+        <textarea id="field-care-pruning"
+          placeholder="Describe when and how to prune, what tools to use, what to cut…"
+          style="min-height:100px;"></textarea>
+      </div>
+      <div class="adm-field" style="margin-top:12px;">
+        <label>🧪 Fertilizing Guide</label>
+        <textarea id="field-care-fertilizing"
+          placeholder="Describe what fertilizer to use, how often, how much, organic vs synthetic…"
+          style="min-height:100px;"></textarea>
+      </div>
+    </div>
+
+    <div class="adm-drawer-actions">
+      <button type="button" class="adm-btn-ghost" onclick="closeDrawer()">Cancel</button>
+      <button type="submit" class="adm-btn-primary">
+        <i class="material-icons">save</i>
+        <span id="save-label">Save Plant</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- DELETE CONFIRM -->
+<div class="adm-confirm-overlay" id="confirm-modal">
+  <div class="adm-confirm-box">
+    <div class="adm-confirm-icon"><i class="material-icons">delete_forever</i></div>
+    <div class="adm-confirm-title">Delete this plant?</div>
+    <p id="confirm-msg" class="adm-confirm-desc">
+      This will permanently remove the plant from the database.
+    </p>
+    <div class="adm-confirm-actions">
+      <button class="adm-btn-ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="adm-btn-danger" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Region dropdown portal — lives at body level so drawer overflow never clips it -->
+<div id="region-options"
+     style="display:none;position:fixed;z-index:99999;background:#fff;
+            border:1.5px solid #3A9E6F;border-radius:8px;
+            box-shadow:0 8px 32px rgba(30,92,58,.18);
+            min-width:180px;padding:0;overflow:hidden;">
+  <div id="region-list" style="max-height:220px;overflow-y:auto;padding:4px 0;">
+    <label class="region-option">
+      <input type="checkbox" name="regions" value="Nationwide"> Nationwide
+    </label>
+    <div class="region-divider">Luzon</div>
+    <label class="region-option"><input type="checkbox" name="regions" value="Ilocos Region"> Ilocos Region (I)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="Cagayan Valley"> Cagayan Valley (II)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="Central Luzon"> Central Luzon (III)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="CALABARZON"> CALABARZON (IV-A)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="MIMAROPA"> MIMAROPA (IV-B)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="Bicol Region"> Bicol Region (V)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="NCR"> NCR (Metro Manila)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="CAR"> CAR (Cordillera)</label>
+    <div class="region-divider">Visayas</div>
+    <label class="region-option"><input type="checkbox" name="regions" value="Western Visayas"> Western Visayas (VI)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="Central Visayas"> Central Visayas (VII)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="Eastern Visayas"> Eastern Visayas (VIII)</label>
+    <div class="region-divider">Mindanao</div>
+    <label class="region-option"><input type="checkbox" name="regions" value="Zamboanga Peninsula"> Zamboanga Peninsula (IX)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="Northern Mindanao"> Northern Mindanao (X)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="Davao Region"> Davao Region (XI)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="SOCCSKSARGEN"> SOCCSKSARGEN (XII)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="Caraga"> Caraga (XIII)</label>
+    <label class="region-option"><input type="checkbox" name="regions" value="BARMM"> BARMM</label>
+  </div>
+</div>
+
+<script src="tanim-admin.js"></script>
+
+</body>
+</html>

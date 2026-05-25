@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌱 Roots • Farm Map</title>
+  <link rel="stylesheet" href="farmmapstyles.css">
+  <link rel="stylesheet" href="../../shared/nav.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+</head>
+<body>
+
+<main class="content" id="content">
+
+  <!-- Module Header -->
+  <div class="module-header">
+    <div class="module-header-left">
+      <a href="../../community/views/roots-feed.html" class="back-button" title="Back to Community">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <div class="module-header-title">
+        <h1><i class="fas fa-map-marker-alt"></i> Farm Map</h1>
+        <p class="subtitle">Pinpoint farms • Find buyers & DA offices nearby • Oroquieta City</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="map-stats-row" id="mapStatsRow"></div>
+
+  <!-- Search + Pin My Farm -->
+  <div class="search-bar">
+    <div class="search-input-container">
+      <input type="text" id="searchInput" placeholder="Search farm, barangay, crop..." oninput="filterFarms()">
+      <button onclick="startVoiceSearch()" class="mic-btn" title="Voice search">
+        <i class="fas fa-microphone"></i>
+      </button>
+    </div>
+    <button onclick="startPinMode()" class="upload-btn" id="pinModeBtn">
+      <i class="fas fa-map-pin"></i> Pin My Farm
+    </button>
+  </div>
+
+  <!-- Filter Chips -->
+  <div class="chips" id="categoryChips"></div>
+
+  <!-- Pin-Mode Banner -->
+  <div class="pin-banner hidden" id="pinBanner">
+    <i class="fas fa-crosshairs"></i>
+    <span>Tap the map to drop your farm pin</span>
+    <button onclick="cancelPinMode()"><i class="fas fa-times"></i> Cancel</button>
+  </div>
+
+  <!-- Map Container -->
+  <div class="map-wrap">
+    <div id="farmMap"></div>
+    <div class="map-overlay-controls">
+      <button onclick="locateMe()"       class="map-ctrl-btn" title="My Location"><i class="fas fa-crosshairs"></i></button>
+      <button onclick="toggleListView()" class="map-ctrl-btn" id="viewToggleBtn" title="Show list"><i class="fas fa-list"></i></button>
+      <button onclick="resetMapView()"   class="map-ctrl-btn" title="Reset view"><i class="fas fa-home"></i></button>
+    </div>
+    <div class="map-legend-wrap">
+      <div class="map-legend-item"><span class="legend-dot ld-farm"></span>Farm</div>
+      <div class="map-legend-item"><span class="legend-dot ld-buyer"></span>Buyer</div>
+      <div class="map-legend-item"><span class="legend-dot ld-da"></span>DA Office</div>
+      <div class="map-legend-item"><span class="legend-dot ld-mine"></span>Mine</div>
+    </div>
+  </div>
+
+  <!-- Farm List Panel -->
+  <div class="farm-list-panel" id="farmListPanel">
+    <div class="farm-list-header">
+      <span id="farmListLabel">Farms & Points</span>
+      <span class="farm-list-count" id="farmListCount">—</span>
+    </div>
+    <div id="farmList"></div>
+  </div>
+
+</main>
+
+
+
+<!-- ═══ ADD / EDIT FARM MODAL ═══ -->
+<div class="modal hidden" id="addFarmModal">
+  <div class="modal-content fm-modal">
+    <button onclick="closeAddFarmModal()" class="close-modal-btn">✕</button>
+    <h3 id="addFarmTitle"><i class="fas fa-map-pin"></i> Add Farm / Point</h3>
+
+    <div class="form-group">
+      <label>Type</label>
+      <div class="type-toggle">
+        <button class="ftype-btn active" data-ftype="farm"  onclick="setFarmType('farm')"><i class="fas fa-seedling"></i> Farm</button>
+        <button class="ftype-btn"        data-ftype="buyer" onclick="setFarmType('buyer')"><i class="fas fa-store"></i> Buyer</button>
+        <button class="ftype-btn"        data-ftype="da"    onclick="setFarmType('da')"><i class="fas fa-building"></i> DA Office</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" id="fName" placeholder="e.g. Mario's Rice Farm, Aling Nena's Store">
+    </div>
+
+    <div class="fm-row">
+      <div class="form-group">
+        <label>Barangay</label>
+        <input type="text" id="fBarangay" placeholder="e.g. Brgy. Pines">
+      </div>
+      <div class="form-group" id="cropFieldWrap">
+        <label>Crop / Product</label>
+        <input type="text" id="fCrop" placeholder="e.g. Rice, Corn">
+      </div>
+    </div>
+
+    <div class="fm-row">
+      <div class="form-group">
+        <label>Area (ha) <span class="optional">optional</span></label>
+        <input type="text" id="fArea" placeholder="e.g. 2.5">
+      </div>
+      <div class="form-group">
+        <label>Contact</label>
+        <input type="text" id="fContact" placeholder="+63 9XX XXX XXXX">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="fDesc" rows="2" placeholder="What do you grow, sell, or offer?"></textarea>
+    </div>
+
+    <!-- Privacy -->
+    <div class="privacy-row" id="privacyRow">
+      <div>
+        <div class="privacy-label"><i class="fas fa-shield-alt"></i> Privacy</div>
+        <div class="privacy-sub" id="privacySub">Location visible to all users</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <label class="privacy-toggle">
+          <input type="checkbox" id="fPrivate" onchange="updatePrivacyLabel()">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="privacy-toggle-lbl" id="privacyLbl">Public</span>
+      </div>
+    </div>
+
+    <!-- Coordinates Display -->
+    <div class="coord-display" id="coordDisplay">
+      <i class="fas fa-map-marker-alt"></i>
+      <span id="coordText">No location selected</span>
+    </div>
+
+    <div class="form-actions-row">
+      <button onclick="closeAddFarmModal()" class="btn secondary">Cancel</button>
+      <button onclick="saveFarm()" class="btn primary"><i class="fas fa-check"></i> Save Pin</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FARM DETAIL MODAL ═══ -->
+<div class="modal hidden" id="farmDetailModal">
+  <div class="modal-content fm-detail-modal">
+    <button onclick="closeFarmDetail()" class="close-modal-btn">✕</button>
+    <div id="farmDetailContent"></div>
+  </div>
+</div>
+
+<!-- ═══ DELETE CONFIRM ═══ -->
+<div class="modal hidden" id="deleteModal">
+  <div class="modal-content fm-confirm-modal">
+    <div class="confirm-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    <h3>Remove Pin?</h3>
+    <p id="deleteMsg">This cannot be undone.</p>
+    <div class="form-actions-row">
+      <button onclick="closeDeleteModal()" class="btn secondary">Cancel</button>
+      <button onclick="confirmDelete()" class="btn danger">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FARMER INFO MODAL ═══ -->
+<div class="modal hidden" id="farmerInfoModal">
+  <div class="modal-content farmer-info">
+    <button onclick="closeFarmerInfo()" class="close-modal">✕</button>
+    <div class="farmer-profile">
+      <div class="farmer-avatar-large">👨‍🌾</div>
+      <h2>Kuya Mario Santos</h2>
+      <div class="farmer-badge"><i class="fas fa-shield-alt"></i><span>DA Verified Farmer</span></div>
+      <div class="farmer-details">
+        <div class="detail-item"><i class="fas fa-map-marker-alt"></i><span>Barangay Pines, Oroquieta City</span></div>
+        <div class="detail-item"><i class="fas fa-phone"></i><span>+63 917 123 4567</span></div>
+        <div class="detail-item"><i class="fas fa-envelope"></i><span>mario.santos@email.com</span></div>
+        <div class="detail-item"><i class="fas fa-seedling"></i><span>Rice & Corn Farmer • 15 years experience</span></div>
+      </div>
+      <div class="farmer-stats">
+        <div class="stat"><span class="stat-number">2</span><span class="stat-label">My Pins</span></div>
+        <div class="stat"><span class="stat-number">8</span><span class="stat-label">Nearby</span></div>
+        <div class="stat"><span class="stat-number">4.8★</span><span class="stat-label">Rating</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NOTIFICATIONS MODAL ═══ -->
+<div class="modal hidden" id="notificationsModal">
+  <div class="modal-content notifications-panel">
+    <button onclick="closeNotifications()" class="close-modal">✕</button>
+    <h2><i class="fas fa-bell"></i> Notifications</h2>
+    <div class="notifications-list" id="notificationsList"></div>
+    <div class="notifications-footer">
+      <button onclick="markAllAsRead()" class="btn secondary">Mark All as Read</button>
+      <button onclick="clearAllNotifications()" class="btn secondary">Clear All</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MESSENGER MODAL ═══ -->
+<div class="modal hidden" id="messengerModal">
+  <div class="modal-content messenger-panel">
+    <button onclick="closeMessenger()" class="close-modal">✕</button>
+    <div class="messenger-header">
+      <div class="messenger-contact">
+        <div class="messenger-avatar" id="messengerAvatar">👩‍🌾</div>
+        <div class="messenger-info">
+          <h3 id="messengerName">Farmer</h3>
+          <span class="messenger-status">Online</span>
+        </div>
+      </div>
+      <div class="messenger-actions">
+        <button onclick="startVoiceCall()" class="messenger-btn" title="Voice Call"><i class="fas fa-phone"></i></button>
+        <button onclick="startVideoCall()" class="messenger-btn" title="Video Call"><i class="fas fa-video"></i></button>
+      </div>
+    </div>
+    <div class="messenger-chat" id="messengerChat"></div>
+    <div class="messenger-input">
+      <input type="text" id="messageInput" placeholder="Type a message..." onkeypress="handleMessageKeyPress(event)">
+      <button onclick="sendMessage()" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast hidden"></div>
+
+<!-- Sidebar -->
+<div id="sidebar" class="sidebar">
+  <div class="sidebar-header">
+    <h2>Menu</h2>
+    <button onclick="toggleSidebar()" class="sidebar-close"><i class="fas fa-times"></i></button>
+  </div>
+  <nav class="sidebar-menu">
+    <a href="#" onclick="showSettings(event)"        class="sidebar-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+    <a href="#" onclick="showAccountSettings(event)" class="sidebar-item"><i class="fas fa-user-circle"></i><span>Account Settings</span></a>
+    <a href="#" onclick="showLanguages(event)"        class="sidebar-item"><i class="fas fa-globe"></i><span>Languages</span></a>
+    <a href="#" onclick="showMyPins(event)"           class="sidebar-item"><i class="fas fa-map-pin"></i><span>My Pins</span></a>
+    <a href="#" onclick="exportMapData(event)"        class="sidebar-item"><i class="fas fa-file-export"></i><span>Export Farm Data</span></a>
+  </nav>
+  <div class="sidebar-section">
+    <h3>Appearance</h3>
+    <div class="theme-switch">
+      <button onclick="setTheme('light')" class="theme-btn light-mode"><i class="fas fa-sun"></i><span>Light</span></button>
+      <button onclick="setTheme('dark')"  class="theme-btn dark-mode"><i class="fas fa-moon"></i><span>Dark</span></button>
+    </div>
+  </div>
+  <div class="sidebar-footer"><span>v1.0.0 • Roots</span></div>
+</div>
+<div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<script src="../../shared/nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="farmmapscript.js"></script>
+</body>
+</html>

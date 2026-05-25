@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📺 Roots • Offline Videos</title>
+  <link rel="stylesheet" href="videos-styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@900&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../../shared/nav.css">
+</head>
+<body>
+
+<main class="content">
+  <div class="module-header">
+    <div class="module-header-left">
+      <button class="back-btn" onclick="goBack()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--forest); margin-right: 12px;">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h1><i class="fas fa-download"></i> Offline Videos</h1>
+      <p class="subtitle">Your downloaded videos - playable without internet</p>
+    </div>
+  </div>
+
+  <!-- Offline Videos Grid -->
+  <div class="video-grid" id="offlineVideoGrid"></div>
+
+  <!-- Empty State -->
+  <div id="emptyState" class="empty-state-container" style="display: none;">
+    <div class="empty-state-icon"><i class="fas fa-download"></i></div>
+    <h3>No Offline Videos</h3>
+    <p>Upload your own videos to save them for offline playback. YouTube videos cannot be downloaded due to browser restrictions.</p>
+    <button class="btn primary" onclick="goBack()">
+      <i class="fas fa-arrow-left"></i> Back to Videos
+    </button>
+  </div>
+</main>
+
+<!-- VIDEO PLAYER MODAL -->
+<div class="modal player-modal hidden" id="videoPlayerModal" onclick="if(event.target === this) closeVideoPlayer()">
+  <button onclick="closeVideoPlayer()" class="player-close-btn" title="Close">
+    <i class="fas fa-times"></i>
+  </button>
+  <div class="player-modal-content" id="playerContent"></div>
+</div>
+
+<script src="../../shared/nav.js"></script>
+<script src="../../shared/routes.js"></script>
+<script src="../../shared/base.js"></script>
+<script src="../../shared/userdd.js"></script>
+<script src="../../shared/messaging.js"></script>
+<script src="../../shared/notify.js"></script>
+<script src="videos-script.js"></script>
+<script>
+  initNotifications({ fakeData: true });
+  Base.resolveAll();
+
+  // Offline interface specific functions
+  function goBack() {
+    window.location.href = 'videos.html';
+  }
+
+  function renderOfflineVideos() {
+    const grid = document.getElementById('offlineVideoGrid');
+    const emptyState = document.getElementById('emptyState');
+    
+    const downloadedVideos = getDownloadedVideos();
+    
+    // Filter to only show videos that are actually playable (local uploaded videos)
+    const playableVideos = downloadedVideos.filter(v => v.isPlayable === true);
+    
+    if (playableVideos.length === 0) {
+      grid.style.display = 'none';
+      emptyState.style.display = 'block';
+      return;
+    }
+    
+    grid.style.display = 'grid';
+    emptyState.style.display = 'none';
+    
+    grid.innerHTML = playableVideos.map(v => `
+      <div class="video-card" onclick="openOfflineVideoPlayer(${v.id})">
+        <div class="thumbnail" style="background-image:url('${v.thumbnail}')">
+          <div class="duration">${v.duration || 'N/A'}</div>
+          <div style="position: absolute; top: 8px; left: 8px; background: #2196F3; color: white; font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
+            <i class="fas fa-download"></i> OFFLINE
+          </div>
+        </div>
+        <div class="video-info">
+          <div class="video-title">${v.title}</div>
+          <div class="video-meta">${v.resolution || 'HD'} • ${v.date || 'recently'}</div>
+          <div class="video-actions">
+            <button class="vc-action-btn vc-action-delete" onclick="event.stopPropagation(); removeOfflineVideo(${v.id})">
+              <i class="fas fa-trash"></i> Remove
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function openOfflineVideoPlayer(id) {
+    const downloadedVideos = getDownloadedVideos();
+    const video = downloadedVideos.find(v => v.id === id);
+    
+    if (!video) {
+      showToast('❌ Video not found in offline storage');
+      return;
+    }
+
+    const modal = document.getElementById('videoPlayerModal');
+    const content = document.getElementById('playerContent');
+    
+    let src = video.videoUrl;
+    if (!src && video.videoBlobId != null) {
+      try {
+        const blob = await idbGetVideoBlob(video.videoBlobId);
+        if (blob) {
+          if (currentPlaybackObjectUrl) URL.revokeObjectURL(currentPlaybackObjectUrl);
+          currentPlaybackObjectUrl = URL.createObjectURL(blob);
+          src = currentPlaybackObjectUrl;
+        }
+      } catch (e) {
+        console.warn('Could not load offline video blob:', e);
+      }
+    }
+    
+    if (!src) {
+      showToast('❌ Video file not available offline.');
+      return;
+    }
+
+    content.innerHTML = `
+      <div class="youtube-player-layout">
+        <div class="main-content">
+          <div class="player-section">
+            <video style="width:100%; height:100%;" controls>
+              <source src="${src}" type="video/mp4">
+              Your browser does not support video.
+            </video>
+          </div>
+          
+          <div class="video-info-section">
+            <div class="video-title-large">${video.title}</div>
+            
+            <div class="video-stats">
+              <span>${video.resolution || 'HD'}</span>
+              <span class="stats-separator"></span>
+              <span>${video.date || 'recently'}</span>
+            </div>
+            
+            <div class="video-actions-bar">
+              <button class="yt-action-btn yt-action-delete" type="button" onclick="removeOfflineVideo(${video.id}); closeVideoPlayer();">
+                <i class="fas fa-trash"></i><span>Remove from Offline</span>
+              </button>
+            </div>
+            
+            <div style="font-size: 14px; color: #606060; line-height: 1.6; margin-top: 16px;">
+              <i class="fas fa-info-circle" style="color: #2196F3;"></i> This video is saved locally and can be played without an internet connection.
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    modal.classList.remove('hidden');
+  }
+
+  function removeOfflineVideo(id) {
+    if (!confirm('Remove this video from offline storage?')) return;
+    
+    const downloadedVideos = getDownloadedVideos();
+    const updatedVideos = downloadedVideos.filter(v => v.id !== id);
+    localStorage.setItem('rootsDownloadedVideos', JSON.stringify(updatedVideos));
+    
+    // Also remove from IndexedDB if exists
+    const video = downloadedVideos.find(v => v.id === id);
+    if (video && video.videoBlobId != null) {
+      idbDeleteVideoBlob(video.videoBlobId);
+    }
+    
+    showToast('✅ Video removed from offline storage');
+    renderOfflineVideos();
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    renderOfflineVideos();
+    
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeVideoPlayer();
+      }
+    });
+  });
+</script>
+</body>
+</html>

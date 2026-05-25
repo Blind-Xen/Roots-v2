@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🛡️ Roots • Admin Panel</title>
+  <link rel="stylesheet" href="../videos-styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@900&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../../shared/nav.css">
+  <style>
+    .admin-sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 320px;
+      height: 100vh;
+      background: white;
+      border-right: 1px solid var(--border);
+      z-index: 1000;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .admin-sidebar.open {
+      transform: translateX(0);
+    }
+
+    .admin-sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+
+    .admin-sidebar-overlay.open {
+      display: block;
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--forest);
+      color: white;
+    }
+
+    .sidebar-header h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .sidebar-content {
+      padding: 20px;
+    }
+
+    .guidelines-section {
+      background: var(--pale);
+      border: 1px solid var(--primary);
+      border-radius: var(--r);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .guidelines-section h3 {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--forest);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .guidelines-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .guidelines-list li {
+      padding: 8px 0;
+      font-size: 13px;
+      color: var(--slate);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .guidelines-list li i {
+      color: var(--primary);
+      margin-top: 3px;
+    }
+
+    .admin-toggle-btn {
+      position: fixed;
+      left: 16px;
+      top: 80px;
+      background: var(--forest);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      z-index: 1001;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s;
+    }
+
+    .admin-toggle-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .admin-toggle-btn i {
+      font-size: 20px;
+    }
+
+    .video-status-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-approved {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-revoked {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .admin-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: var(--r-sm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .admin-btn.approve {
+      background: #28a745;
+      color: white;
+    }
+
+    .admin-btn.approve:hover {
+      background: #218838;
+    }
+
+    .admin-btn.revoke {
+      background: #ffc107;
+      color: #212529;
+    }
+
+    .admin-btn.revoke:hover {
+      background: #e0a800;
+    }
+
+    .admin-btn.delete {
+      background: #dc3545;
+      color: white;
+    }
+
+    .admin-btn.delete:hover {
+      background: #c82333;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .filter-tab {
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-tab:hover {
+      background: var(--fog);
+    }
+
+    .filter-tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .admin-content {
+      margin-left: 0;
+      transition: margin-left 0.3s ease;
+    }
+
+    .admin-content.shifted {
+      margin-left: 320px;
+    }
+
+    @media (max-width: 768px) {
+      .admin-sidebar {
+        width: 100%;
+      }
+      .admin-content.shifted {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Admin Toggle Button -->
+<button class="admin-toggle-btn" onclick="toggleAdminSidebar()">
+  <i class="fas fa-shield-alt"></i>
+</button>
+
+<!-- Admin Sidebar Overlay -->
+<div class="admin-sidebar-overlay" id="adminSidebarOverlay" onclick="toggleAdminSidebar()"></div>
+
+<!-- Admin Sidebar Panel -->
+<div class="admin-sidebar" id="adminSidebar">
+  <div class="sidebar-header">
+    <h2><i class="fas fa-shield-alt"></i> Admin Panel</h2>
+  </div>
+  <div class="sidebar-content">
+    <div class="guidelines-section">
+      <h3><i class="fas fa-book"></i> Posting Guidelines</h3>
+      <ul class="guidelines-list">
+        <li><i class="fas fa-check-circle"></i> All videos must be farm-related content</li>
+        <li><i class="fas fa-check-circle"></i> All must be respectful when other farmers post videos</li>
+        <li><i class="fas fa-check-circle"></i> No offensive or inappropriate language</li>
+        <li><i class="fas fa-check-circle"></i> No misleading or false information</li>
+        <li><i class="fas fa-check-circle"></i> Respect intellectual property rights</li>
+        <li><i class="fas fa-check-circle"></i> Follow community standards and etiquette</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: var(--slate);">
+        <i class="fas fa-chart-bar"></i> Admin Stats
+      </h3>
+      <div style="display: grid; gap: 12px;">
+        <div style="background: var(--fog); padding: 12px; border-radius: var(--r-sm);">
+          <div style="font-size: 24px; font-weight: 700; color: var(--forest);" id="pendingCount">0</div>
+          <div style="font-size: 12px; color: var(--dust);">Pending Approval</div>
+        </div>
+        <div style="background: var(--fog); padding: 12px; border-radius: var(--r-sm);">
+          <div style="font-size: 24px; font-weight: 700; color: #28a745;" id="approvedCount">0</div>
+          <div style="font-size: 12px; color: var(--dust);">Approved Videos</div>
+        </div>
+        <div style="background: var(--fog); padding: 12px; border-radius: var(--r-sm);">
+          <div style="font-size: 24px; font-weight: 700; color: #dc3545;" id="revokedCount">0</div>
+          <div style="font-size: 12px; color: var(--dust);">Revoked Videos</div>
+        </div>
+      </div>
+    </div>
+
+    <button onclick="toggleAdminSidebar()" class="btn secondary" style="width: 100%;">
+      <i class="fas fa-times"></i> Close Panel
+    </button>
+  </div>
+</div>
+
+<main class="content admin-content" id="adminContent">
+  <div class="module-header">
+    <div class="module-header-left">
+      <h1><i class="fas fa-shield-alt"></i> Video Moderation</h1>
+      <p class="subtitle">Review, approve, revoke, or delete videos according to FarmTube guidelines</p>
+    </div>
+    <div class="module-header-right">
+      <button class="btn secondary" onclick="adminLogout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+      <button class="btn secondary" onclick="window.location.href='../videos.html'">
+        <i class="fas fa-arrow-left"></i> Back to Videos
+      </button>
+    </div>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="filter-tab active" onclick="filterAdminVideos('all')" data-filter="all">All Videos</button>
+    <button class="filter-tab" onclick="filterAdminVideos('pending')" data-filter="pending">Pending</button>
+    <button class="filter-tab" onclick="filterAdminVideos('approved')" data-filter="approved">Approved</button>
+    <button class="filter-tab" onclick="filterAdminVideos('revoked')" data-filter="revoked">Revoked</button>
+  </div>
+
+  <div class="video-grid" id="adminVideoGrid"></div>
+</main>
+
+<script src="../../shared/nav.js"></script>
+<script src="../../shared/routes.js"></script>
+<script src="../../shared/base.js"></script>
+<script src="../../shared/userdd.js"></script>
+<script src="../../shared/messaging.js"></script>
+<script src="../../shared/notify.js"></script>
+<script src="../videos-script.js"></script>
+<script src="admin-script.js"></script>
+<script>
+  initNotifications({ fakeData: true });
+  Base.resolveAll();
+</script>
+</body>
+</html>

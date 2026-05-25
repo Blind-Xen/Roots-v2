@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roots — Seller Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="payment.css">
+  <link rel="stylesheet" href="../../shared/dropdowns.css">
+  <link rel="stylesheet" href="../../shared/nav.css">
+</head>
+<body>
+
+<!-- Background Elements -->
+<div class="land-bg"></div>
+<div class="land-noise"></div>
+
+<!-- Swipe Instruction (shown on first visit) -->
+<div class="swipe-instruction" id="swipeInstruction">
+  <div class="swipe-content">
+    <i class="fas fa-hand-point-left"></i>
+    <p>Swipe left to open side bar</p>
+  </div>
+</div>
+
+<!-- Invisible Side Bar Panel -->
+<div class="side-bar-panel" id="sideBarPanel">
+  <div class="side-bar-content">
+    <div class="side-bar-header">
+      <div class="nav-logo">
+        <div class="logo-leaf">🌱</div>
+        <span>Roots Payment</span>
+      </div>
+      <button class="close-side-bar" onclick="closeSideBar()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <ul class="side-bar-menu">
+      <li><a href="#dashboard" class="side-bar-link active" data-page="dashboard" onclick="switchPage('dashboard'); closeSideBar();">
+        <i class="fas fa-home"></i> Dashboard
+      </a></li>
+      <li><a href="#orders" class="side-bar-link" data-page="orders" onclick="switchPage('orders'); closeSideBar();">
+        <i class="fas fa-box"></i> All Orders
+      </a></li>
+      <li><a href="#analytics" class="side-bar-link" data-page="analytics" onclick="switchPage('analytics'); closeSideBar();">
+        <i class="fas fa-chart-line"></i> Analytics
+      </a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Side Bar Overlay -->
+<div class="side-bar-overlay" id="sideBarOverlay" onclick="closeSideBar()"></div>
+
+<!-- Main Content -->
+<div class="seller-container">
+  
+  <!-- Dashboard Page -->
+  <div class="seller-page active" id="dashboard-page">
+    <div class="page-header">
+      <div class="header-text">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Welcome back! Here's your order summary</p>
+      </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon pending">📦</div>
+        <div class="kpi-content">
+          <div class="kpi-label">Pending Orders</div>
+          <div class="kpi-value" id="kpi-pending">5</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon processing">🚀</div>
+        <div class="kpi-content">
+          <div class="kpi-label">Processing</div>
+          <div class="kpi-value" id="kpi-processing">3</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon shipped">🚚</div>
+        <div class="kpi-content">
+          <div class="kpi-label">Shipped</div>
+          <div class="kpi-value" id="kpi-shipped">8</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon completed">✅</div>
+        <div class="kpi-content">
+          <div class="kpi-label">Completed</div>
+          <div class="kpi-value" id="kpi-completed">24</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="dashboard-section">
+      <div class="section-header">
+        <h2 class="section-title">Recent Orders</h2>
+        <a href="#" onclick="switchPage('orders')" class="view-all-link">View All →</a>
+      </div>
+      <div class="recent-orders-list" id="recentOrdersList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- All Orders Page -->
+  <div class="seller-page" id="orders-page">
+    <div class="page-header">
+      <div class="header-text">
+        <h1 class="page-title">All Orders</h1>
+        <p class="page-subtitle">Manage and track all buyer orders</p>
+      </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="orders-toolbar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="orderSearch" placeholder="Search order ID, buyer name..." onkeyup="filterOrders()">
+      </div>
+      <div class="filter-group">
+        <select id="statusFilter" class="filter-select" onchange="filterOrders()">
+          <option value="">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="orders-table-wrapper">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Buyer Name</th>
+            <th>Items</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTableBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Analytics Page -->
+  <div class="seller-page" id="analytics-page">
+    <div class="page-header">
+      <div class="header-text">
+        <h1 class="page-title">Analytics</h1>
+        <p class="page-subtitle">Track your sales performance and metrics</p>
+      </div>
+    </div>
+
+    <!-- Analytics Cards -->
+    <div class="analytics-grid">
+      <div class="analytics-card">
+        <div class="card-header">
+          <h3 class="card-title">Total Revenue</h3>
+          <span class="card-icon">💰</span>
+        </div>
+        <div class="card-value" id="analytics-revenue">₱0.00</div>
+        <div class="card-meta">This month</div>
+      </div>
+
+      <div class="analytics-card">
+        <div class="card-header">
+          <h3 class="card-title">Total Orders</h3>
+          <span class="card-icon">📊</span>
+        </div>
+        <div class="card-value" id="analytics-orders">0</div>
+        <div class="card-meta">All time</div>
+      </div>
+
+      <div class="analytics-card">
+        <div class="card-header">
+          <h3 class="card-title">Avg Order Value</h3>
+          <span class="card-icon">📈</span>
+        </div>
+        <div class="card-value" id="analytics-avg">₱0.00</div>
+        <div class="card-meta">All orders</div>
+      </div>
+
+      <div class="analytics-card">
+        <div class="card-header">
+          <h3 class="card-title">Customer Rating</h3>
+          <span class="card-icon">⭐</span>
+        </div>
+        <div class="card-value" id="analytics-rating">4.8</div>
+        <div class="card-meta">Based on 50 reviews</div>
+      </div>
+    </div>
+
+    <!-- Status Distribution -->
+    <div class="analytics-section">
+      <div class="section-card">
+        <h3 class="card-title">Order Status Distribution</h3>
+        <div class="status-chart" id="statusChart">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Products -->
+    <div class="analytics-section">
+      <div class="section-card">
+        <h3 class="card-title">Top Selling Products</h3>
+        <div class="products-list" id="topProductsList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- Order Detail Modal -->
+<div class="modal hidden" id="orderModal">
+  <div class="modal-overlay" onclick="closeOrderModal()"></div>
+  <div class="modal-content order-modal">
+    <button class="modal-close" onclick="closeOrderModal()">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalOrderId">Order #TXN-2026-001</h2>
+      <div class="modal-status" id="modalStatus"></div>
+    </div>
+
+    <div class="modal-body">
+      <!-- Buyer Information -->
+      <div class="modal-section">
+        <h3 class="modal-section-title">👤 Buyer Information</h3>
+        <div class="modal-grid">
+          <div class="modal-field">
+            <span class="field-label">Name</span>
+            <span class="field-value" id="modalBuyerName"></span>
+          </div>
+          <div class="modal-field">
+            <span class="field-label">Email</span>
+            <span class="field-value" id="modalBuyerEmail"></span>
+          </div>
+          <div class="modal-field">
+            <span class="field-label">Phone</span>
+            <span class="field-value" id="modalBuyerPhone"></span>
+          </div>
+          <div class="modal-field">
+            <span class="field-label">Date</span>
+            <span class="field-value" id="modalOrderDate"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery Information -->
+      <div class="modal-section">
+        <h3 class="modal-section-title">🚚 Delivery Address</h3>
+        <div class="modal-field">
+          <span class="field-value" id="modalBuyerAddress"></span>
+        </div>
+      </div>
+
+      <!-- Order Items -->
+      <div class="modal-section">
+        <h3 class="modal-section-title">📦 Order Items</h3>
+        <div class="modal-items" id="modalOrderItems">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="modal-section">
+        <h3 class="modal-section-title">💳 Order Summary</h3>
+        <div class="modal-summary">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="modalSubtotal">₱0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping</span>
+            <span id="modalShipping">₱50.00</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <span id="modalTotal">₱0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Timeline -->
+      <div class="modal-section">
+        <h3 class="modal-section-title">⏱️ Order Timeline</h3>
+        <div class="timeline" id="modalTimeline">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Status Update -->
+      <div class="modal-section">
+        <h3 class="modal-section-title">📋 Update Status</h3>
+        <div class="status-update-group">
+          <select class="form-input" id="statusUpdateSelect">
+            <option value="">Select new status...</option>
+            <option value="processing">Processing</option>
+            <option value="shipped">Shipped</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <button class="btn-primary" onclick="updateOrderStatus()">
+            <i class="fas fa-refresh"></i> Update Status
+          </button>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="modal-section">
+        <h3 class="modal-section-title">📝 Notes</h3>
+        <div class="modal-field">
+          <span class="field-value" id="modalNotes" style="white-space: pre-wrap;"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast hidden" id="toast"></div>
+
+
+<script src="../../shared/nav.js"></script>
+<script src="../../shared/routes.js"></script>
+<script src="../../shared/base.js"></script>
+<script src="../../shared/userdd.js"></script>
+<script src="../../shared/notify.js"></script>
+<script src="skeleton.js"></script>
+<script src="payment.js"></script>
+<script>
+  initNotifications({ fakeData: true });
+  Base.resolveAll();
+</script>
+</body>
+</html>

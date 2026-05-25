@@ -1,0 +1,211 @@
+:root {
+    --green-900: #0a2e1a;
+    --green-800: #0f3d22;
+    --green-700: #145229;
+    --green-600: #1a6b35;
+    --green-500: #22843f;
+    --green-400: #2ea653;
+    --green-300: #4dc473;
+    --green-200: #a8dbb8;
+    --green-100: #d4f0de;
+    --green-50:  #eef8f2;
+    --bg:        #f0f2ee;
+    --bg-card:   #ffffff;
+    --text-primary: #0f2318;
+    --text-secondary: #4a6657;
+    --text-muted: #8aa898;
+    --border: #dde8e1;
+    --nav-h: 60px;
+    --radius-card: 14px;
+    --radius-pill: 999px;
+    --shadow-card: 0 1px 3px rgba(15,35,24,.06), 0 4px 12px rgba(15,35,24,.04);
+    --shadow-card-hover: 0 4px 16px rgba(15,35,24,.10), 0 1px 4px rgba(15,35,24,.06);
+    --font: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+
+  /* ── PAGE LAYOUT ── */
+  .page { max-width: 1200px; margin: 0 auto; padding: 28px 24px 60px; }
+
+  /* ── MARKET HEADER ── */
+  .market-header {
+    margin-bottom: 48px;
+  }
+
+  .market-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .market-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+  }
+
+  /* ── CATEGORY CARDS ── */
+  .category-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  .category-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 32px 24px;
+    box-shadow: var(--shadow-card);
+    transition: all .3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--green-50) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity .3s ease;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .category-card:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-8px);
+    border-color: var(--green-400);
+  }
+
+  .category-card:hover::before {
+    opacity: 1;
+  }
+
+  .category-card > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .category-card-icon {
+    font-size: 48px;
+    line-height: 1;
+  }
+
+  .category-card-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .category-card-desc {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0;
+    flex: 1;
+  }
+
+  .category-card-cta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--green-600);
+    font-weight: 700;
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  .category-card:hover .category-card-cta {
+    color: var(--green-700);
+  }
+
+  .category-card-cta svg {
+    transition: transform .2s ease;
+  }
+
+  .category-card:hover .category-card-cta svg {
+    transform: translateX(4px);
+  }
+
+  /* ── RESPONSIVE ── */
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .category-cards {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .page { padding: 20px 16px 40px; }
+
+    .market-title {
+      font-size: 24px;
+    }
+
+    .category-cards {
+      grid-template-columns: 1fr;
+    }
+
+    .category-card {
+      padding: 24px 20px;
+    }
+
+    .category-card-icon {
+      font-size: 40px;
+    }
+
+    .category-card-title {
+      font-size: 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .page { padding: 16px 12px 32px; }
+
+    .market-title {
+      font-size: 20px;
+    }
+
+    .market-subtitle {
+      font-size: 14px;
+    }
+
+    .category-card {
+      padding: 20px 16px;
+      gap: 12px;
+    }
+
+    .category-card-icon {
+      font-size: 36px;
+    }
+
+    .category-card-title {
+      font-size: 18px;
+    }
+
+    .category-card-desc {
+      font-size: 14px;
+    }
+  }

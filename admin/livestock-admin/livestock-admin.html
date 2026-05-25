@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐄 Roots • Livestock Admin</title>
+  <link rel="stylesheet" href="livestock-admin-styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<header id="mainHeader">
+  <a class="logo" href="livestock.html"><i class="fas fa-paw"></i> Roots</a>
+  <nav class="fb-center-nav">
+    <a class="fb-nav-btn" href="livestock.html" title="Home"><i class="fas fa-home"></i><span class="nav-label">Home</span></a>
+    <button type="button" class="fb-nav-btn active" title="Admin"><i class="fas fa-shield-alt"></i><span class="nav-label">Admin</span></button>
+  </nav>
+  <div class="header-actions">
+    <a class="btn secondary" href="livestock.html"><i class="fas fa-arrow-left"></i> Back to Livestock</a>
+  </div>
+</header>
+
+<main class="admin-shell">
+  <section class="admin-panel">
+    <div class="admin-header">
+      <div class="admin-header-icon"><i class="fas fa-shield-alt"></i></div>
+      <div>
+        <h3>Admin Dashboard</h3>
+        <p>Livestock Module — Oroquieta</p>
+      </div>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('overview', this)"><i class="fas fa-chart-bar"></i> Overview</button>
+      <button class="admin-tab" onclick="switchAdminTab('listings', this)"><i class="fas fa-paw"></i> Listings</button>
+      <button class="admin-tab" onclick="switchAdminTab('farmers', this)"><i class="fas fa-users"></i> Farmers</button>
+      <button class="admin-tab" onclick="switchAdminTab('reports', this)"><i class="fas fa-flag"></i> Reports</button>
+      <button class="admin-tab" onclick="switchAdminTab('settings', this)"><i class="fas fa-cog"></i> Settings</button>
+    </div>
+
+    <div class="admin-tab-content" id="adminTab-overview">
+      <div class="admin-stats-grid">
+        <div class="admin-stat-card green">
+          <i class="fas fa-paw"></i>
+          <span class="admin-stat-num" id="adm-total-listings">0</span>
+          <span class="admin-stat-lbl">Total Listings</span>
+        </div>
+        <div class="admin-stat-card blue">
+          <i class="fas fa-users"></i>
+          <span class="admin-stat-num" id="adm-total-farmers">0</span>
+          <span class="admin-stat-lbl">Registered Farmers</span>
+        </div>
+        <div class="admin-stat-card amber">
+          <i class="fas fa-shield-alt"></i>
+          <span class="admin-stat-num" id="adm-verified">0</span>
+          <span class="admin-stat-lbl">DA Verified</span>
+        </div>
+        <div class="admin-stat-card red">
+          <i class="fas fa-flag"></i>
+          <span class="admin-stat-num" id="adm-reports">0</span>
+          <span class="admin-stat-lbl">Pending Reports</span>
+        </div>
+      </div>
+
+      <div class="admin-section-title"><i class="fas fa-clock"></i> Recent Activity</div>
+      <div class="admin-activity-list" id="adminActivityList"></div>
+
+      <div class="admin-section-title" style="margin-top:20px"><i class="fas fa-chart-pie"></i> Listings by Animal Type</div>
+      <div class="admin-breakdown-list" id="adminBreakdown"></div>
+    </div>
+
+    <div class="admin-tab-content hidden" id="adminTab-listings">
+      <div class="admin-toolbar">
+        <div class="admin-search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search listings…" oninput="filterAdminListings(this.value)">
+        </div>
+        <select class="admin-select" onchange="filterAdminListingsByStatus(this.value)">
+          <option value="all">All Status</option>
+          <option value="active">Active</option>
+          <option value="sold">Sold</option>
+          <option value="deleted">Deleted</option>
+        </select>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Animal</th>
+              <th>Seller</th>
+              <th>Price</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminListingsTbody"></tbody>
+        </table>
+      </div>
+      <div class="admin-listing-cards" id="adminListingsCards"></div>
+    </div>
+
+    <div class="admin-tab-content hidden" id="adminTab-farmers">
+      <div class="admin-toolbar">
+        <div class="admin-search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search farmers…" oninput="renderAdminFarmers(this.value)">
+        </div>
+        <button class="admin-add-btn" onclick="showToast('➕ Add farmer feature coming soon!')"><i class="fas fa-plus"></i> Add Farmer</button>
+      </div>
+      <div class="admin-farmer-list" id="admin-farmer-list-dynamic"></div>
+    </div>
+
+    <div class="admin-tab-content hidden" id="adminTab-reports">
+      <div class="admin-reports-list">
+        <div class="admin-report-card red" id="reportCard1">
+          <div class="admin-report-top">
+            <span class="admin-report-type"><i class="fas fa-flag"></i> Suspected Mislabeling</span>
+            <span class="admin-report-time">Yesterday, 3:42 PM</span>
+          </div>
+          <div class="admin-report-listing">Listing: <strong>50 Native Chickens – Bulk Sale</strong></div>
+          <div class="admin-report-desc">Reporter claims the chickens are not free-range as described. Weight seems off.</div>
+          <div class="admin-report-reporter">Reported by: Nong Berto Cabales</div>
+          <div class="admin-report-actions">
+            <button class="admin-action-btn edit" onclick="showToast('📋 Opening full report…')"><i class="fas fa-eye"></i> Review</button>
+            <button class="admin-action-btn verify" onclick="adminDismissReport(document.getElementById('reportCard1'))"><i class="fas fa-check"></i> Dismiss</button>
+            <button class="admin-action-btn remove" onclick="adminRemoveReportedListing('50 Native Chickens', document.getElementById('reportCard1'))"><i class="fas fa-trash"></i> Remove Listing</button>
+          </div>
+        </div>
+        <div class="admin-report-card amber" id="reportCard2">
+          <div class="admin-report-top">
+            <span class="admin-report-type"><i class="fas fa-exclamation-triangle"></i> Price Dispute</span>
+            <span class="admin-report-time">2 days ago, 10:15 AM</span>
+          </div>
+          <div class="admin-report-listing">Listing: <strong>Landrace Boar – Stud Service</strong></div>
+          <div class="admin-report-desc">Buyer claims stud service fee was changed after agreement. Requesting mediation.</div>
+          <div class="admin-report-reporter">Reported by: Aling Coring Reyes</div>
+          <div class="admin-report-actions">
+            <button class="admin-action-btn edit" onclick="showToast('📋 Opening full report…')"><i class="fas fa-eye"></i> Review</button>
+            <button class="admin-action-btn verify" onclick="adminDismissReport(document.getElementById('reportCard2'))"><i class="fas fa-check"></i> Dismiss</button>
+            <button class="admin-action-btn remove" onclick="adminRemoveReportedListing('Landrace Boar', document.getElementById('reportCard2'))"><i class="fas fa-trash"></i> Remove Listing</button>
+          </div>
+        </div>
+        <div class="admin-reports-empty">
+          <i class="fas fa-check-circle"></i>
+          <p>No other reports — module is running clean!</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-tab-content hidden" id="adminTab-settings">
+      <div class="admin-settings-list">
+        <div class="admin-settings-section">
+          <div class="admin-settings-section-title"><i class="fas fa-toggle-on"></i> Module Controls</div>
+          <div class="admin-setting-row">
+            <div class="admin-setting-info">
+              <div class="admin-setting-label">Allow New Listings</div>
+              <div class="admin-setting-desc">Let farmers post new animal listings</div>
+            </div>
+            <label class="admin-toggle">
+              <input type="checkbox" checked onchange="showToast('⚙️ Setting saved!')">
+              <span class="admin-toggle-slider"></span>
+            </label>
+          </div>
+          <div class="admin-setting-row">
+            <div class="admin-setting-info">
+              <div class="admin-setting-label">Require DA Verification to Post</div>
+              <div class="admin-setting-desc">Only DA-verified farmers can post listings</div>
+            </div>
+            <label class="admin-toggle">
+              <input type="checkbox" onchange="showToast('⚙️ Setting saved!')">
+              <span class="admin-toggle-slider"></span>
+            </label>
+          </div>
+          <div class="admin-setting-row">
+            <div class="admin-setting-info">
+              <div class="admin-setting-label">Show Market Prices Panel</div>
+              <div class="admin-setting-desc">Display DA reference price board on sidebar</div>
+            </div>
+            <label class="admin-toggle">
+              <input type="checkbox" checked onchange="showToast('⚙️ Setting saved!')">
+              <span class="admin-toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="admin-settings-section">
+          <div class="admin-settings-section-title"><i class="fas fa-database"></i> Data Management</div>
+          <div class="admin-setting-row">
+            <div class="admin-setting-info">
+              <div class="admin-setting-label">Export All Listings</div>
+              <div class="admin-setting-desc">Download listings as CSV for DA reports</div>
+            </div>
+            <button class="admin-setting-btn" onclick="adminExportListingsCSV()"><i class="fas fa-download"></i> Export CSV</button>
+          </div>
+          <div class="admin-setting-row">
+            <div class="admin-setting-info">
+              <div class="admin-setting-label">Export Farmer Registry</div>
+              <div class="admin-setting-desc">Download all registered farmers</div>
+            </div>
+            <button class="admin-setting-btn" onclick="adminExportFarmersCSV()"><i class="fas fa-download"></i> Export CSV</button>
+          </div>
+          <div class="admin-setting-row">
+            <div class="admin-setting-info">
+              <div class="admin-setting-label">Clear Deleted Listings</div>
+              <div class="admin-setting-desc">Permanently remove all soft-deleted entries</div>
+            </div>
+            <button class="admin-setting-btn danger" onclick="adminPurgeDeletedListings()"><i class="fas fa-trash-alt"></i> Purge</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="toast" class="toast hidden"></div>
+<div id="adminListingModal" class="admin-modal hidden" onclick="closeAdminListingModal(event)">
+  <div class="admin-modal-body" onclick="event.stopPropagation()">
+    <button class="admin-modal-close" onclick="closeAdminListingModal()"><i class="fas fa-times"></i></button>
+    <div id="adminListingModalContent"></div>
+  </div>
+</div>
+<script src="livestock-admin-script.js"></script>
+</body>
+</html>

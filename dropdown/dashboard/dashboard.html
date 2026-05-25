@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roots — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../../registration/RootsRegistration.css">
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════ DASHBOARD ═══════════════════ -->
+<div id="dashView" class="view active">
+
+  <!-- ── BODY ── -->
+  <div class="dash-body-wrap">
+    <div class="dash-main" id="mainContent">
+
+      <!-- ──── HOME PANEL (Farmer) ──── -->
+      <div class="panel-view active" id="panelHome">
+        <div class="dash-greeting">
+          <h2 id="dashGreeting">Good morning, Kuya Mario 🌾</h2>
+          <p id="dashDate">Barangay Pines, Oroquieta City</p>
+        </div>
+
+        <!-- Non-farmer dashboard -->
+        <div id="nfWelcomeBanner" style="display:none">
+          <div class="dash-stats">
+            <div class="d-stat green" style="animation-delay:.05s">
+              <div class="d-stat-icon">🛒</div>
+              <div class="d-stat-num">38</div>
+              <div class="d-stat-lbl">Market Listings</div>
+              <div class="d-stat-delta">↑ 5 new this week</div>
+            </div>
+            <div class="d-stat amber" style="animation-delay:.1s">
+              <div class="d-stat-icon">💰</div>
+              <div class="d-stat-num">₱18</div>
+              <div class="d-stat-lbl">Avg. Palay Price/kg</div>
+              <div class="d-stat-delta">↑ ₱1 from last week</div>
+            </div>
+            <div class="d-stat blue" style="animation-delay:.15s">
+              <div class="d-stat-icon">🏛️</div>
+              <div class="d-stat-num">3</div>
+              <div class="d-stat-lbl">DA Events Near You</div>
+              <div class="d-stat-delta">↑ 1 new this month</div>
+            </div>
+            <div class="d-stat red" style="animation-delay:.2s">
+              <div class="d-stat-icon">🤝</div>
+              <div class="d-stat-num">5</div>
+              <div class="d-stat-lbl">Pending Tasks</div>
+              <div class="d-stat-delta neg">↑ 2 new since yesterday</div>
+            </div>
+          </div>
+          <div class="dash-grid wide" style="margin-bottom:16px">
+            <div class="d-panel">
+              <div class="d-panel-head">
+                <span class="d-panel-title"><i class="fas fa-chart-bar"></i> Monthly Market Activity</span>
+                <button class="d-panel-action">View all</button>
+              </div>
+              <div class="bar-chart">
+                <div class="bar-label-row">
+                  <span class="bar-label">0</span>
+                  <span class="bar-label">20</span>
+                  <span class="bar-label">40</span>
+                </div>
+                <div class="bar-row" id="nfBarChart"></div>
+                <div class="bar-month-row" id="nfBarMonths"></div>
+              </div>
+            </div>
+            <div>
+              <div class="weather-card" style="margin-bottom:16px">
+                <div class="w-top">
+                  <div>
+                    <div class="w-loc"><i class="fas fa-map-marker-alt"></i> Oroquieta City</div>
+                    <div class="w-temp">28°</div>
+                    <div class="w-cond">Partly Cloudy</div>
+                  </div>
+                  <div class="w-icon">⛅</div>
+                </div>
+                <div class="w-row">
+                  <div class="w-item"><div class="w-item-v">72%</div><div class="w-item-l">Humidity</div></div>
+                  <div class="w-item"><div class="w-item-v">12km/h</div><div class="w-item-l">Wind</div></div>
+                  <div class="w-item"><div class="w-item-v">30%</div><div class="w-item-l">Rain</div></div>
+                </div>
+              </div>
+              <div class="d-panel">
+                <div class="d-panel-head">
+                  <span class="d-panel-title"><i class="fas fa-clock"></i> Quick Stats</span>
+                </div>
+                <div style="padding:14px 20px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div style="background:var(--fog);border-radius:var(--r-sm);padding:12px;text-align:center">
+                    <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:800;color:var(--forest)">12</div>
+                    <div style="font-size:10px;color:var(--dust);margin-top:2px">Saved Listings</div>
+                  </div>
+                  <div style="background:var(--fog);border-radius:var(--r-sm);padding:12px;text-align:center">
+                    <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:800;color:var(--amber)">7</div>
+                    <div style="font-size:10px;color:var(--dust);margin-top:2px">Farmers Followed</div>
+                  </div>
+                  <div style="background:var(--fog);border-radius:var(--r-sm);padding:12px;text-align:center">
+                    <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:800;color:var(--canopy)">3</div>
+                    <div style="font-size:10px;color:var(--dust);margin-top:2px">DA Programs</div>
+                  </div>
+                  <div style="background:var(--fog);border-radius:var(--r-sm);padding:12px;text-align:center">
+                    <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:800;color:#3B82F6">5</div>
+                    <div style="font-size:10px;color:var(--dust);margin-top:2px">Inquiries Sent</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dash-grid">
+            <div class="d-panel">
+              <div class="d-panel-head">
+                <span class="d-panel-title"><i class="fas fa-history"></i> Recent Activity</span>
+                <button class="d-panel-action">See all</button>
+              </div>
+              <div id="nfActivityList"></div>
+            </div>
+            <div class="d-panel">
+              <div class="d-panel-head">
+                <span class="d-panel-title"><i class="fas fa-tasks"></i> My Tasks</span>
+                <button class="d-panel-action" onclick="showToast('➕ Add task coming soon!')">+ Add</button>
+              </div>
+              <div id="nfTaskList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Farmer dashboard -->
+        <div id="farmerDashContent">
+          <div class="dash-stats">
+            <div class="d-stat green" style="animation-delay:.05s">
+              <div class="d-stat-icon">🌱</div>
+              <div class="d-stat-num">3.5</div>
+              <div class="d-stat-lbl">Hectares Planted</div>
+              <div class="d-stat-delta">↑ 0.5 ha from last season</div>
+            </div>
+            <div class="d-stat amber" style="animation-delay:.1s">
+              <div class="d-stat-icon">🌾</div>
+              <div class="d-stat-num">4.8T</div>
+              <div class="d-stat-lbl">Harvest This Season</div>
+              <div class="d-stat-delta">↑ 12% vs last year</div>
+            </div>
+            <div class="d-stat blue" style="animation-delay:.15s">
+              <div class="d-stat-icon">₱</div>
+              <div class="d-stat-num">82k</div>
+              <div class="d-stat-lbl">Total Revenue</div>
+              <div class="d-stat-delta">↑ 8% vs last year</div>
+            </div>
+            <div class="d-stat red" style="animation-delay:.2s">
+              <div class="d-stat-icon">⏰</div>
+              <div class="d-stat-num">5</div>
+              <div class="d-stat-lbl">Pending Tasks</div>
+              <div class="d-stat-delta neg">↑ 2 new since yesterday</div>
+            </div>
+          </div>
+          <div class="dash-grid wide" style="margin-bottom:16px">
+            <div class="d-panel">
+              <div class="d-panel-head">
+                <span class="d-panel-title"><i class="fas fa-chart-bar"></i> Monthly Revenue</span>
+                <button class="d-panel-action">View all</button>
+              </div>
+              <div class="bar-chart">
+                <div class="bar-label-row">
+                  <span class="bar-label">₱0</span>
+                  <span class="bar-label">₱20k</span>
+                  <span class="bar-label">₱40k</span>
+                </div>
+                <div class="bar-row" id="barChart"></div>
+                <div class="bar-month-row" id="barMonths"></div>
+              </div>
+            </div>
+            <div>
+              <div class="weather-card" style="margin-bottom:16px">
+                <div class="w-top">
+                  <div>
+                    <div class="w-loc"><i class="fas fa-map-marker-alt"></i> Oroquieta City</div>
+                    <div class="w-temp">28°</div>
+                    <div class="w-cond">Partly Cloudy</div>
+                  </div>
+                  <div class="w-icon">⛅</div>
+                </div>
+                <div class="w-row">
+                  <div class="w-item"><div class="w-item-v">72%</div><div class="w-item-l">Humidity</div></div>
+                  <div class="w-item"><div class="w-item-v">12km/h</div><div class="w-item-l">Wind</div></div>
+                  <div class="w-item"><div class="w-item-v">30%</div><div class="w-item-l">Rain</div></div>
+                </div>
+              </div>
+              <div class="d-panel">
+                <div class="d-panel-head">
+                  <span class="d-panel-title"><i class="fas fa-clock"></i> Quick Stats</span>
+                </div>
+                <div style="padding:14px 20px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div style="background:var(--fog);border-radius:var(--r-sm);padding:12px;text-align:center">
+                    <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:800;color:var(--forest)">12</div>
+                    <div style="font-size:10px;color:var(--dust);margin-top:2px">Active Listings</div>
+                  </div>
+                  <div style="background:var(--fog);border-radius:var(--r-sm);padding:12px;text-align:center">
+                    <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:800;color:var(--amber)">38</div>
+                    <div style="font-size:10px;color:var(--dust);margin-top:2px">Items Sold</div>
+                  </div>
+                  <div style="background:var(--fog);border-radius:var(--r-sm);padding:12px;text-align:center">
+                    <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:800;color:var(--canopy)">4.8★</div>
+                    <div style="font-size:10px;color:var(--dust);margin-top:2px">Seller Rating</div>
+                  </div>
+                  <div style="background:var(--fog);border-radius:var(--r-sm);padding:12px;text-align:center">
+                    <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:800;color:#3B82F6">3</div>
+                    <div style="font-size:10px;color:var(--dust);margin-top:2px">DA Events</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dash-grid">
+            <div class="d-panel">
+              <div class="d-panel-head">
+                <span class="d-panel-title"><i class="fas fa-history"></i> Recent Activity</span>
+                <button class="d-panel-action">See all</button>
+              </div>
+              <div id="activityList"></div>
+            </div>
+            <div class="d-panel">
+              <div class="d-panel-head">
+                <span class="d-panel-title"><i class="fas fa-tasks"></i> Farm Tasks</span>
+                <button class="d-panel-action" onclick="showToast('➕ Add task coming soon!')">+ Add</button>
+              </div>
+              <div id="taskList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ──── MODULE PLACEHOLDERS ──── -->
+      <div class="panel-view" id="panelLivestock"><div class="module-placeholder"><div class="module-placeholder-icon">🐄</div><h2 class="module-placeholder-title">Livestock Module</h2><p class="module-placeholder-text">Proceed to other module</p><button class="module-placeholder-btn" onclick="navSwitch('home')"><i class="fas fa-arrow-left"></i> Back to Dashboard</button></div></div>
+      <div class="panel-view" id="panelFruitsveg"><div class="module-placeholder"><div class="module-placeholder-icon">🥬</div><h2 class="module-placeholder-title">Fruits & Vegetables Module</h2><p class="module-placeholder-text">Proceed to other module</p><button class="module-placeholder-btn" onclick="navSwitch('home')"><i class="fas fa-arrow-left"></i> Back to Dashboard</button></div></div>
+      <div class="panel-view" id="panelLandequip"><div class="module-placeholder"><div class="module-placeholder-icon">🚜</div><h2 class="module-placeholder-title">Land & Equipment Module</h2><p class="module-placeholder-text">Proceed to other module</p><button class="module-placeholder-btn" onclick="navSwitch('home')"><i class="fas fa-arrow-left"></i> Back to Dashboard</button></div></div>
+      <div class="panel-view" id="panelTanimbase"><div class="module-placeholder"><div class="module-placeholder-icon">🌿</div><h2 class="module-placeholder-title">TanimBase — Plant Wikipedia</h2><p class="module-placeholder-text">Proceed to other module</p><button class="module-placeholder-btn" onclick="navSwitch('home')"><i class="fas fa-arrow-left"></i> Back to Dashboard</button></div></div>
+      <div class="panel-view" id="panelPayment"><div class="module-placeholder"><div class="module-placeholder-icon">💸</div><h2 class="module-placeholder-title">Payment Module</h2><p class="module-placeholder-text">Proceed to other module</p><button class="module-placeholder-btn" onclick="navSwitch('home')"><i class="fas fa-arrow-left"></i> Back to Dashboard</button></div></div>
+      <div class="panel-view" id="panelFarmmap"><div class="module-placeholder"><div class="module-placeholder-icon">🗺️</div><h2 class="module-placeholder-title">Farm Mapping Module</h2><p class="module-placeholder-text">Proceed to other module</p><button class="module-placeholder-btn" onclick="navSwitch('home')"><i class="fas fa-arrow-left"></i> Back to Dashboard</button></div></div>
+      <div class="panel-view" id="panelHarvest"><div class="module-placeholder"><div class="module-placeholder-icon">📅</div><h2 class="module-placeholder-title">Crop Harvest Calendar</h2><p class="module-placeholder-text">Proceed to other module</p><button class="module-placeholder-btn" onclick="navSwitch('home')"><i class="fas fa-arrow-left"></i> Back to Dashboard</button></div></div>
+      <div class="panel-view" id="panelDocs"><div class="module-placeholder"><div class="module-placeholder-icon">📁</div><h2 class="module-placeholder-title">Farmer Documents</h2><p class="module-placeholder-text">Proceed to other module</p><button class="module-placeholder-btn" onclick="navSwitch('home')"><i class="fas fa-arrow-left"></i> Back to Dashboard</button></div></div>
+
+      <!-- ──── PROFILE PANEL — replaced, see RootsProfile.html ──── -->
+      <div class="panel-view" id="panelProfile">
+        <div class="module-placeholder">
+          <div class="module-placeholder-icon">👤</div>
+          <h2 class="module-placeholder-title">Profile</h2>
+          <p class="module-placeholder-text">New profile page coming soon</p>
+          <button class="module-placeholder-btn" onclick="navSwitch('home')">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+          </button>
+        </div>
+      </div>
+
+      <!-- ──── NON-FARMER MODULE PLACEHOLDERS ──── -->
+      <div class="panel-view" id="panelNfmarket"><div class="module-placeholder"><div class="module-placeholder-icon">🛒</div><h2 class="module-placeholder-title">Browse Market</h2><p class="module-placeholder-text">View fresh produce listings from local farmers</p><button class="module-placeholder-btn" style="background:#1a3a50" onclick="nfNavSwitch('home')"><i class="fas fa-arrow-left"></i> Back to Home</button></div></div>
+      <div class="panel-view" id="panelNfprices"><div class="module-placeholder"><div class="module-placeholder-icon">💰</div><h2 class="module-placeholder-title">Farm Commodity Prices</h2><p class="module-placeholder-text">Current market prices in Oroquieta</p><button class="module-placeholder-btn" style="background:#1a3a50" onclick="nfNavSwitch('home')"><i class="fas fa-arrow-left"></i> Back to Home</button></div></div>
+      <div class="panel-view" id="panelNfda"><div class="module-placeholder"><div class="module-placeholder-icon">🏛️</div><h2 class="module-placeholder-title">DA Region X Resources</h2><p class="module-placeholder-text">Seminars, programs & announcements</p><button class="module-placeholder-btn" style="background:#1a3a50" onclick="nfNavSwitch('home')"><i class="fas fa-arrow-left"></i> Back to Home</button></div></div>
+      <div class="panel-view" id="panelNfconnect"><div class="module-placeholder"><div class="module-placeholder-icon">🤝</div><h2 class="module-placeholder-title">Connect with Farmers</h2><p class="module-placeholder-text">Find and contact verified farmers near you</p><button class="module-placeholder-btn" style="background:#1a3a50" onclick="nfNavSwitch('home')"><i class="fas fa-arrow-left"></i> Back to Home</button></div></div>
+
+      <!-- ──── NON-FARMER PROFILE — replaced, see RootsProfile.html ──── -->
+      <div class="panel-view" id="panelNfprofile">
+        <div class="module-placeholder">
+          <div class="module-placeholder-icon">👤</div>
+          <h2 class="module-placeholder-title">Profile</h2>
+          <p class="module-placeholder-text">New profile page coming soon</p>
+          <button class="module-placeholder-btn" style="background:#1a3a50" onclick="nfNavSwitch('home')">
+            <i class="fas fa-arrow-left"></i> Back to Home
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /dash-main -->
+  </div><!-- /dash-body-wrap -->
+</div><!-- /dashView -->
+
+
+<!-- ═══════════════════ FARMER DETAIL MODAL ═══════════════════ -->
+<div class="modal-overlay" id="farmerModal" onclick="closeModal(event)">
+  <div class="modal-box" id="farmerModalBox">
+    <div class="modal-head">
+      <h3>Farmer Profile</h3>
+      <button class="modal-close" onclick="closeModal(true)">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-farmer-hero">
+        <div class="modal-farmer-av" id="modalAv" style="background:var(--pale);color:var(--forest)">MR</div>
+        <div>
+          <div class="modal-farmer-name" id="modalName">Mario Santos</div>
+          <div class="modal-farmer-sub" id="modalSub">Brgy. 3 — Taboc · Palay / Rice</div>
+        </div>
+      </div>
+      <div class="info-grid">
+        <div class="info-field"><div class="info-field-label">Mobile</div><div class="info-field-value" id="modalPhone">+63 917 123 4567</div></div>
+        <div class="info-field"><div class="info-field-label">Status</div><div class="info-field-value" id="modalStatus">Pending</div></div>
+        <div class="info-field"><div class="info-field-label">Barangay</div><div class="info-field-value" id="modalBarangay">Brgy. 3 — Taboc</div></div>
+        <div class="info-field"><div class="info-field-label">Primary Crop</div><div class="info-field-value" id="modalCrop">🌾 Palay / Rice</div></div>
+        <div class="info-field"><div class="info-field-label">Farm Area</div><div class="info-field-value" id="modalArea">2.5 ha</div></div>
+        <div class="info-field"><div class="info-field-label">Registered</div><div class="info-field-value" id="modalDate">Apr 1, 2025</div></div>
+        <div class="info-field" style="grid-column:1/-1"><div class="info-field-label">Submitted ID</div><div class="info-field-value" id="modalIdType" style="font-size:13px">—</div></div>
+      </div>
+      <div style="background:var(--fog);border-radius:var(--r-sm);padding:14px;font-size:13px;color:var(--dust);line-height:1.6" id="modalNotes"></div>
+      <div id="modalIdImageSection"></div>
+    </div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<script src="/shared/nav.js"></script>
+<script src="../../registration/Registration.js"></script>
+<script>
+  (function(){
+    var dv = document.getElementById('dashView');
+    if(dv) dv.classList.add('active');
+  })();
+
+  (function(){
+    var btn = document.getElementById('navAdmin');
+    if(btn) btn.setAttribute('onclick', "window.location.href='admin.html'");
+  })();
+
+  var _doLogout = window.doLogout;
+  window.doLogout = function(){
+    if(typeof _doLogout === 'function') _doLogout();
+    window.location.href = 'index.html';
+  };
+
+  window.goLanding = function(){
+    window.location.href = 'index.html';
+  };
+</script>
+</body>
+</html>

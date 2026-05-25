@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Roots Community Feed - Connect with farmers, share harvests, and grow together">
+<meta name="theme-color" content="#0f3d22">
+<meta name="app-root" content="../../">
+<title>Roots — Community Feed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/dropdowns.css">
+<link rel="stylesheet" href="../../shared/nav.css">
+<link rel="stylesheet" href="feed-styles.css">
+</head>
+<body>
+
+<!-- Messaging shell -->
+<div id="msg-shell"></div>
+
+<!-- NAV injected by nav.js -->
+
+<div class="page">
+  <!-- Mobile right drawer backdrop -->
+  <div class="mobile-right-drawer-backdrop" id="mobileRightDrawerBackdrop"></div>
+
+  <!-- Mobile right drawer -->
+  <div class="mobile-right-drawer" id="mobileRightDrawer">
+    <div class="mobile-right-drawer-header">
+      <span class="mobile-right-drawer-title">Sidebar</span>
+      <button class="mobile-right-drawer-close" id="mobileRightDrawerClose" aria-label="Close menu">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="mobile-right-drawer-content">
+      <!-- Sidebar content cloned here by feed-script.js -->
+    </div>
+  </div>
+
+  <div class="main-layout">
+
+    <!-- ── CENTER FEED ── -->
+    <div>
+
+      <!-- COMPOSE -->
+      <div class="compose">
+        <div class="compose-top">
+          <div class="compose-avatar">KM</div>
+          <input class="compose-input" type="text" placeholder="Share something with the community, Karlo…">
+        </div>
+        <div class="compose-divider"></div>
+        <div class="compose-actions">
+          <button class="compose-btn green">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Photo</span>
+          </button>
+          <button class="compose-btn orange">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            <span>Video</span>
+          </button>
+          <button class="compose-btn blue">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+            <span>Q&amp;A</span>
+          </button>
+          <button class="compose-btn compose-submit">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Post
+          </button>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filters">
+        <button class="filter-pill active">All Posts</button>
+        <button class="filter-pill">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Photos
+        </button>
+        <button class="filter-pill">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          Videos
+        </button>
+        <button class="filter-pill">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+          Q&amp;A
+        </button>
+        <button class="filter-pill">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Tips
+        </button>
+        <span class="filter-count">Showing 248 posts</span>
+      </div>
+
+      <!-- FEED — rendered dynamically by feed-script.js -->
+      <div class="feed" id="feed"></div>
+
+    </div>
+
+    <!-- ── RIGHT SIDEBAR ── -->
+    <aside class="sidebar">
+      <!-- Mini Community Calendar -->
+      <div class="sidebar-card mini-cal-card">
+        <div class="mini-cal-topbar">
+          <span class="mini-cal-badge"><i class="fas fa-users"></i> Community Events</span>
+          <button class="mini-cal-today-btn" onclick="miniCalGoToToday()" title="Go to today">Today</button>
+        </div>
+        <div class="mini-cal-nav">
+          <button onclick="miniCalPrevMonth()" class="mini-cal-nav-btn"><i class="fas fa-chevron-left"></i></button>
+          <div class="mini-cal-month-lbl" id="communityMiniCalLabel">—</div>
+          <button onclick="miniCalNextMonth()" class="mini-cal-nav-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="mini-cal-dow-row">
+          <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+        </div>
+        <div class="mini-cal-grid" id="communityMiniCalGrid"></div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-title">Trending Tags</div>
+        <div class="trending-item">
+          <span class="trending-num">1</span>
+          <div><div class="trending-tag">#harvest</div><div class="trending-count">142 posts</div></div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">2</span>
+          <div><div class="trending-tag">#organicfarming</div><div class="trending-count">98 posts</div></div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">3</span>
+          <div><div class="trending-tag">#ampalaya</div><div class="trending-count">76 posts</div></div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">4</span>
+          <div><div class="trending-tag">#Q&A</div><div class="trending-count">54 posts</div></div>
+        </div>
+        <div class="trending-item">
+          <span class="trending-num">5</span>
+          <div><div class="trending-tag">#vermicompost</div><div class="trending-count">41 posts</div></div>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-title">Suggested Farmers</div>
+        <div class="suggested-user">
+          <div class="sug-avatar">BT</div>
+          <div class="sug-info">
+            <div class="sug-name">Ben Torres</div>
+            <div class="sug-loc">Negros Occidental</div>
+          </div>
+          <button class="sug-follow">Follow</button>
+        </div>
+        <div class="suggested-user">
+          <div class="sug-avatar" style="background:#c8e6c9;color:#1b5e20">SR</div>
+          <div class="sug-info">
+            <div class="sug-name">Sofia Ramos</div>
+            <div class="sug-loc">Iloilo</div>
+          </div>
+          <button class="sug-follow">Follow</button>
+        </div>
+        <div class="suggested-user">
+          <div class="sug-avatar" style="background:#b2dfdb;color:#004d40">PG</div>
+          <div class="sug-info">
+            <div class="sug-name">Pedro Gonzales</div>
+            <div class="sug-loc">Bukidnon</div>
+          </div>
+          <button class="sug-follow">Follow</button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        Privacy · Terms · Advertising · About Roots<br>
+        Roots © 2026 — Farming Community PH
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<script src="../../shared/nav.js"></script>
+<script src="../../shared/routes.js"></script>
+<script src="../../shared/base.js"></script>
+<script src="../../shared/userdd.js"></script>
+<script src="../../shared/notify.js"></script>
+<script src="../../dropdown/calendar/calendar-nonfarmer/communitycalendar.js"></script>
+<script src="feed-script.js"></script>
+<script>
+  initNotifications({ fakeData: true });
+  Base.resolveAll();
+</script>
+</body>
+</html>

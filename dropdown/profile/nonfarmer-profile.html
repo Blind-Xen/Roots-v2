@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Roots — User Profile">
+  <meta name="theme-color" content="#0f3d22">
+  <title>Roots — User Profile</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!--
+    nav.css is injected automatically by nav.js — no link needed here.
+    dropdowns.css is loaded by userdd.js / notify.js as needed.
+  -->
+
+  <link rel="stylesheet" href="nonfarmer-profile.css">
+</head>
+<body>
+
+  <!-- NAV injected by nav.js -->
+
+  <div class="page">
+
+    <!-- ══════════════════════════════
+         COVER + AVATAR
+    ══════════════════════════════ -->
+    <div class="cover-wrap">
+      <div class="cover-placeholder" id="coverImage">
+        <i class="fas fa-leaf"></i>
+      </div>
+      <div class="avatar-wrap">
+        <div class="profile-avatar" id="profileAvatar" title="Maria Santos">
+          MS
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════
+         PROFILE HEADER CARD
+    ══════════════════════════════ -->
+    <div class="profile-header-card">
+
+      <div class="header-top">
+
+        <div class="name-block">
+          <div class="profile-name">
+            Maria Santos
+            <span class="user-badge">
+              <i class="fas fa-user"></i> Community Member
+            </span>
+          </div>
+          <div class="profile-handle">@maria.santos</div>
+          <div class="profile-location">
+            <i class="fas fa-map-marker-alt"></i>
+            Cagayan de Oro, Misamis Oriental
+          </div>
+          <p class="profile-bio">
+            Passionate about supporting local farmers and eating fresh, organic produce. 
+            Home cook and weekend market enthusiast. 🥬🛒
+          </p>
+        </div>
+
+        <div class="profile-actions">
+          <button class="btn btn-primary" id="followBtn">
+            <i class="fas fa-user-plus"></i>
+            <span>Follow</span>
+          </button>
+          <button class="btn btn-secondary" id="messageBtn">
+            <i class="fas fa-comment-alt"></i>
+            <span>Message</span>
+          </button>
+          <button class="btn btn-secondary btn-icon" id="moreBtn" aria-label="More options">
+            <i class="fas fa-ellipsis-h"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Stats -->
+      <div class="profile-stats">
+        <div class="stat-item">
+          <span class="stat-num">284</span>
+          <span class="stat-label">Followers</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">132</span>
+          <span class="stat-label">Following</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">47</span>
+          <span class="stat-label">Posts</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">18</span>
+          <span class="stat-label">Orders</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">23</span>
+          <span class="stat-label">Reviews Left</span>
+        </div>
+      </div>
+
+    </div><!-- /profile-header-card -->
+
+
+    <!-- ══════════════════════════════
+         TABS
+    ══════════════════════════════ -->
+    <div class="profile-tabs" role="tablist" aria-label="Profile sections">
+      <button class="tab-btn active" role="tab" aria-selected="true"  data-tab="posts"    aria-controls="tab-posts">
+        <i class="fas fa-th-large"     aria-hidden="true"></i><span>Posts</span>
+      </button>
+      <button class="tab-btn"          role="tab" aria-selected="false" data-tab="orders"   aria-controls="tab-orders">
+        <i class="fas fa-shopping-bag" aria-hidden="true"></i><span>Orders</span>
+      </button>
+      <button class="tab-btn"          role="tab" aria-selected="false" data-tab="following" aria-controls="tab-following">
+        <i class="fas fa-tractor"      aria-hidden="true"></i><span>Following</span>
+      </button>
+      <button class="tab-btn"          role="tab" aria-selected="false" data-tab="about"    aria-controls="tab-about">
+        <i class="fas fa-info-circle"  aria-hidden="true"></i><span>About</span>
+      </button>
+    </div>
+
+
+    <!-- ══════════════════════════════
+         BODY — SIDEBAR + MAIN PANEL
+    ══════════════════════════════ -->
+    <div class="profile-body">
+
+      <!-- ── LEFT SIDEBAR ── -->
+      <aside class="profile-sidebar">
+
+        <!-- Activity Summary -->
+        <div class="sidebar-card">
+          <div class="card-title"><i class="fas fa-chart-bar" aria-hidden="true"></i> Activity</div>
+          <div class="activity-row">
+            <div class="activity-icon bg-green"><i class="fas fa-shopping-cart"></i></div>
+            <div class="activity-info">
+              <div class="activity-val">18</div>
+              <div class="activity-label">Total Orders</div>
+            </div>
+          </div>
+          <div class="activity-row">
+            <div class="activity-icon bg-blue"><i class="fas fa-star"></i></div>
+            <div class="activity-info">
+              <div class="activity-val">23</div>
+              <div class="activity-label">Reviews Written</div>
+            </div>
+          </div>
+          <div class="activity-row">
+            <div class="activity-icon bg-orange"><i class="fas fa-heart"></i></div>
+            <div class="activity-info">
+              <div class="activity-val">156</div>
+              <div class="activity-label">Posts Liked</div>
+            </div>
+          </div>
+          <div class="activity-row no-border">
+            <div class="activity-icon bg-purple"><i class="fas fa-comment-alt"></i></div>
+            <div class="activity-info">
+              <div class="activity-val">89</div>
+              <div class="activity-label">Comments Made</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Favorite Farmers -->
+        <div class="sidebar-card">
+          <div class="card-title"><i class="fas fa-tractor" aria-hidden="true"></i> Top Farmers Followed</div>
+          <div class="fav-farmer-list">
+
+            <a href="#" class="fav-farmer-item">
+              <div class="fav-farmer-avatar">JM</div>
+              <div class="fav-farmer-info">
+                <div class="fav-farmer-name">Jose Magbanua</div>
+                <div class="fav-farmer-loc">Bukidnon</div>
+              </div>
+              <div class="fav-farmer-badge"><i class="fas fa-leaf"></i> Organic</div>
+            </a>
+
+            <a href="#" class="fav-farmer-item">
+              <div class="fav-farmer-avatar" style="background:#c8e6c9;color:#1b5e20">BT</div>
+              <div class="fav-farmer-info">
+                <div class="fav-farmer-name">Ben Torres</div>
+                <div class="fav-farmer-loc">Negros Occidental</div>
+              </div>
+              <div class="fav-farmer-badge"><i class="fas fa-seedling"></i> Rice</div>
+            </a>
+
+            <a href="#" class="fav-farmer-item no-border">
+              <div class="fav-farmer-avatar" style="background:#b2dfdb;color:#004d40">SR</div>
+              <div class="fav-farmer-info">
+                <div class="fav-farmer-name">Sofia Ramos</div>
+                <div class="fav-farmer-loc">Iloilo</div>
+              </div>
+              <div class="fav-farmer-badge"><i class="fas fa-apple-alt"></i> Fruits</div>
+            </a>
+
+          </div>
+        </div>
+
+        <!-- Shopping Summary -->
+        <div class="sidebar-card">
+          <div class="card-title"><i class="fas fa-shopping-bag" aria-hidden="true"></i> Shopping Summary</div>
+          <div class="shop-summary-row">
+            <span class="shop-summary-label">Total Spent</span>
+            <span class="shop-summary-val green">₱4,820</span>
+          </div>
+          <div class="shop-summary-row">
+            <span class="shop-summary-label">Farmers Supported</span>
+            <span class="shop-summary-val">7</span>
+          </div>
+          <div class="shop-summary-row">
+            <span class="shop-summary-label">Pending Orders</span>
+            <span class="shop-summary-val orange">2</span>
+          </div>
+          <div class="shop-summary-row no-border">
+            <span class="shop-summary-label">Member Since</span>
+            <span class="shop-summary-val">Feb 2024</span>
+          </div>
+        </div>
+
+      </aside><!-- /sidebar -->
+
+
+      <!-- ── MAIN PANEL ── -->
+      <main class="main-panel">
+
+        <!-- ══════════════════════════════
+             POSTS TAB
+        ══════════════════════════════ -->
+        <div class="tab-panel active" id="tab-posts" role="tabpanel">
+
+          <article class="post-card">
+            <div class="post-header">
+              <div class="post-avatar">MS</div>
+              <div class="post-meta">
+                <div class="post-author">Maria Santos</div>
+                <div class="post-time">1 day ago · <i class="fas fa-globe-asia" aria-hidden="true"></i></div>
+              </div>
+              <button class="post-options-btn" aria-label="Post options"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="post-body">
+              Just got my first order from Mang Jose's farm! The ampalaya is incredibly fresh — you can taste the difference from the supermarket ones. Highly recommend supporting local farmers! 🥬🙌
+              <span class="post-tag-inline">#supportlocal #organicfood #rootsph</span>
+            </div>
+            <div class="post-reaction-bar">
+              <div class="reaction-left">❤️ <span class="reaction-count">87</span></div>
+              <div class="reaction-right">
+                <span>14 comments</span>
+                <span class="dot">·</span>
+                <span>9 shares</span>
+              </div>
+            </div>
+            <div class="post-sep"></div>
+            <div class="post-actions">
+              <button class="post-action-btn liked" data-action="like">
+                <i class="fas fa-heart" aria-hidden="true"></i><span>Liked</span>
+              </button>
+              <button class="post-action-btn" data-action="comment">
+                <i class="far fa-comment" aria-hidden="true"></i><span>Comment</span>
+              </button>
+              <button class="post-action-btn" data-action="share">
+                <i class="fas fa-share-alt" aria-hidden="true"></i><span>Share</span>
+              </button>
+            </div>
+          </article>
+
+          <article class="post-card">
+            <div class="post-header">
+              <div class="post-avatar">MS</div>
+              <div class="post-meta">
+                <div class="post-author">Maria Santos</div>
+                <div class="post-time">3 days ago · <i class="fas fa-globe-asia" aria-hidden="true"></i></div>
+              </div>
+              <button class="post-options-btn" aria-label="Post options"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="post-body">
+              Anyone else tried vermicomposting at home? I started mine last month and the results are amazing for my container garden. Any tips from the farmers here? 🪱
+            </div>
+            <div class="post-reaction-bar">
+              <div class="reaction-left">❤️ <span class="reaction-count">43</span></div>
+              <div class="reaction-right">
+                <span>28 comments</span>
+                <span class="dot">·</span>
+                <span>5 shares</span>
+              </div>
+            </div>
+            <div class="post-sep"></div>
+            <div class="post-actions">
+              <button class="post-action-btn" data-action="like">
+                <i class="far fa-heart" aria-hidden="true"></i><span>Like</span>
+              </button>
+              <button class="post-action-btn" data-action="comment">
+                <i class="far fa-comment" aria-hidden="true"></i><span>Comment</span>
+              </button>
+              <button class="post-action-btn" data-action="share">
+                <i class="fas fa-share-alt" aria-hidden="true"></i><span>Share</span>
+              </button>
+            </div>
+          </article>
+
+          <article class="post-card">
+            <div class="post-header">
+              <div class="post-avatar">MS</div>
+              <div class="post-meta">
+                <div class="post-author">Maria Santos</div>
+                <div class="post-time">1 week ago · <i class="fas fa-globe-asia" aria-hidden="true"></i></div>
+              </div>
+              <button class="post-options-btn" aria-label="Post options"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+            <div class="post-body">
+              Visited the weekend farmers market in CDO today and the produce was incredible. So much variety and all fresh from the farm. This is why I love this community! ❤️🥕🍅
+              <span class="post-tag-inline">#farmersmarket #freshandfresh #CDO</span>
+            </div>
+            <div class="post-media-placeholder"><i class="fas fa-store" aria-hidden="true"></i></div>
+            <div class="post-reaction-bar">
+              <div class="reaction-left">❤️ <span class="reaction-count">112</span></div>
+              <div class="reaction-right">
+                <span>19 comments</span>
+                <span class="dot">·</span>
+                <span>22 shares</span>
+              </div>
+            </div>
+            <div class="post-sep"></div>
+            <div class="post-actions">
+              <button class="post-action-btn" data-action="like">
+                <i class="far fa-heart" aria-hidden="true"></i><span>Like</span>
+              </button>
+              <button class="post-action-btn" data-action="comment">
+                <i class="far fa-comment" aria-hidden="true"></i><span>Comment</span>
+              </button>
+              <button class="post-action-btn" data-action="share">
+                <i class="fas fa-share-alt" aria-hidden="true"></i><span>Share</span>
+              </button>
+            </div>
+          </article>
+
+        </div><!-- /tab-posts -->
+
+
+        <!-- ══════════════════════════════
+             ORDERS TAB
+        ══════════════════════════════ -->
+        <div class="tab-panel" id="tab-orders" role="tabpanel">
+
+          <!-- Order filters -->
+          <div class="order-filters">
+            <button class="order-filter-pill active" data-filter="all">All (18)</button>
+            <button class="order-filter-pill" data-filter="pending">Pending (2)</button>
+            <button class="order-filter-pill" data-filter="delivered">Delivered (14)</button>
+            <button class="order-filter-pill" data-filter="cancelled">Cancelled (2)</button>
+          </div>
+
+          <!-- Order cards -->
+          <div class="orders-list" id="ordersList">
+
+            <div class="order-card" data-status="pending">
+              <div class="order-card-header">
+                <div class="order-id-block">
+                  <span class="order-id">#ORD-2026-0051</span>
+                  <span class="order-status status-pending">
+                    <i class="fas fa-clock"></i> Pending
+                  </span>
+                </div>
+                <div class="order-date">May 22, 2026</div>
+              </div>
+              <div class="order-farmer-row">
+                <div class="order-farmer-avatar">JM</div>
+                <div class="order-farmer-info">
+                  <div class="order-farmer-name">Jose Magbanua</div>
+                  <div class="order-farmer-loc"><i class="fas fa-map-marker-alt"></i> Bukidnon</div>
+                </div>
+                <a href="#" class="order-farmer-link">View Farm</a>
+              </div>
+              <div class="order-items">
+                <div class="order-item-row">
+                  <span class="order-item-name">Organic Ampalaya</span>
+                  <span class="order-item-qty">2 kg</span>
+                  <span class="order-item-price">₱120</span>
+                </div>
+                <div class="order-item-row">
+                  <span class="order-item-name">Highland Sayote</span>
+                  <span class="order-item-qty">1.5 kg</span>
+                  <span class="order-item-price">₱60</span>
+                </div>
+              </div>
+              <div class="order-footer">
+                <div class="order-total">Total: <strong>₱180</strong></div>
+                <div class="order-actions-row">
+                  <button class="order-btn order-btn-outline">Cancel Order</button>
+                  <button class="order-btn order-btn-primary">Track Order</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="order-card" data-status="pending">
+              <div class="order-card-header">
+                <div class="order-id-block">
+                  <span class="order-id">#ORD-2026-0048</span>
+                  <span class="order-status status-pending">
+                    <i class="fas fa-clock"></i> Pending
+                  </span>
+                </div>
+                <div class="order-date">May 20, 2026</div>
+              </div>
+              <div class="order-farmer-row">
+                <div class="order-farmer-avatar" style="background:#c8e6c9;color:#1b5e20">BT</div>
+                <div class="order-farmer-info">
+                  <div class="order-farmer-name">Ben Torres</div>
+                  <div class="order-farmer-loc"><i class="fas fa-map-marker-alt"></i> Negros Occidental</div>
+                </div>
+                <a href="#" class="order-farmer-link">View Farm</a>
+              </div>
+              <div class="order-items">
+                <div class="order-item-row">
+                  <span class="order-item-name">Heirloom Rice (5kg bag)</span>
+                  <span class="order-item-qty">1 bag</span>
+                  <span class="order-item-price">₱380</span>
+                </div>
+              </div>
+              <div class="order-footer">
+                <div class="order-total">Total: <strong>₱380</strong></div>
+                <div class="order-actions-row">
+                  <button class="order-btn order-btn-outline">Cancel Order</button>
+                  <button class="order-btn order-btn-primary">Track Order</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="order-card" data-status="delivered">
+              <div class="order-card-header">
+                <div class="order-id-block">
+                  <span class="order-id">#ORD-2026-0039</span>
+                  <span class="order-status status-delivered">
+                    <i class="fas fa-check-circle"></i> Delivered
+                  </span>
+                </div>
+                <div class="order-date">May 10, 2026</div>
+              </div>
+              <div class="order-farmer-row">
+                <div class="order-farmer-avatar">JM</div>
+                <div class="order-farmer-info">
+                  <div class="order-farmer-name">Jose Magbanua</div>
+                  <div class="order-farmer-loc"><i class="fas fa-map-marker-alt"></i> Bukidnon</div>
+                </div>
+                <a href="#" class="order-farmer-link">View Farm</a>
+              </div>
+              <div class="order-items">
+                <div class="order-item-row">
+                  <span class="order-item-name">Organic Ampalaya</span>
+                  <span class="order-item-qty">3 kg</span>
+                  <span class="order-item-price">₱180</span>
+                </div>
+                <div class="order-item-row">
+                  <span class="order-item-name">Organic Tomatoes</span>
+                  <span class="order-item-qty">2 kg</span>
+                  <span class="order-item-price">₱150</span>
+                </div>
+                <div class="order-item-row">
+                  <span class="order-item-name">Fresh Kangkong</span>
+                  <span class="order-item-qty">3 bundles</span>
+                  <span class="order-item-price">₱75</span>
+                </div>
+              </div>
+              <div class="order-footer">
+                <div class="order-total">Total: <strong>₱405</strong></div>
+                <div class="order-actions-row">
+                  <button class="order-btn order-btn-outline review-btn" data-reviewed="false">
+                    <i class="fas fa-star"></i> Leave Review
+                  </button>
+                  <button class="order-btn order-btn-primary">Reorder</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="order-card" data-status="delivered">
+              <div class="order-card-header">
+                <div class="order-id-block">
+                  <span class="order-id">#ORD-2026-0027</span>
+                  <span class="order-status status-delivered">
+                    <i class="fas fa-check-circle"></i> Delivered
+                  </span>
+                </div>
+                <div class="order-date">April 28, 2026</div>
+              </div>
+              <div class="order-farmer-row">
+                <div class="order-farmer-avatar" style="background:#b2dfdb;color:#004d40">SR</div>
+                <div class="order-farmer-info">
+                  <div class="order-farmer-name">Sofia Ramos</div>
+                  <div class="order-farmer-loc"><i class="fas fa-map-marker-alt"></i> Iloilo</div>
+                </div>
+                <a href="#" class="order-farmer-link">View Farm</a>
+              </div>
+              <div class="order-items">
+                <div class="order-item-row">
+                  <span class="order-item-name">Sweet Mango (Carabao)</span>
+                  <span class="order-item-qty">2 kg</span>
+                  <span class="order-item-price">₱240</span>
+                </div>
+              </div>
+              <div class="order-footer">
+                <div class="order-total">Total: <strong>₱240</strong></div>
+                <div class="order-actions-row">
+                  <button class="order-btn order-btn-outline review-btn reviewed" data-reviewed="true">
+                    <i class="fas fa-check"></i> Reviewed
+                  </button>
+                  <button class="order-btn order-btn-primary">Reorder</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="order-card" data-status="cancelled">
+              <div class="order-card-header">
+                <div class="order-id-block">
+                  <span class="order-id">#ORD-2026-0018</span>
+                  <span class="order-status status-cancelled">
+                    <i class="fas fa-times-circle"></i> Cancelled
+                  </span>
+                </div>
+                <div class="order-date">April 12, 2026</div>
+              </div>
+              <div class="order-farmer-row">
+                <div class="order-farmer-avatar">JM</div>
+                <div class="order-farmer-info">
+                  <div class="order-farmer-name">Jose Magbanua</div>
+                  <div class="order-farmer-loc"><i class="fas fa-map-marker-alt"></i> Bukidnon</div>
+                </div>
+                <a href="#" class="order-farmer-link">View Farm</a>
+              </div>
+              <div class="order-items">
+                <div class="order-item-row">
+                  <span class="order-item-name">Dinorado Native Rice</span>
+                  <span class="order-item-qty">5 kg</span>
+                  <span class="order-item-price">₱425</span>
+                </div>
+              </div>
+              <div class="order-footer">
+                <div class="order-total">Total: <strong>₱425</strong></div>
+                <div class="order-actions-row">
+                  <button class="order-btn order-btn-primary">Reorder</button>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /orders-list -->
+
+        </div><!-- /tab-orders -->
+
+
+        <!-- ══════════════════════════════
+             FOLLOWING TAB
+        ══════════════════════════════ -->
+        <div class="tab-panel" id="tab-following" role="tabpanel">
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <span><i class="fas fa-tractor" aria-hidden="true"></i> Farmers Following (12)</span>
+              <a href="#" class="panel-link">Discover Farmers</a>
+            </div>
+            <div class="following-grid">
+
+              <div class="following-card">
+                <div class="following-avatar">JM</div>
+                <div class="following-name">Jose Magbanua</div>
+                <div class="following-loc"><i class="fas fa-map-marker-alt"></i> Bukidnon</div>
+                <div class="following-crops">
+                  <span class="crop-tag">Ampalaya</span>
+                  <span class="crop-tag">Rice</span>
+                </div>
+                <div class="following-rating"><span class="stars">★★★★★</span> 4.8</div>
+                <div class="following-btns">
+                  <a href="#" class="following-view-btn">View Farm</a>
+                  <button class="following-unfollow-btn" data-following="true">Following</button>
+                </div>
+              </div>
+
+              <div class="following-card">
+                <div class="following-avatar" style="background:#c8e6c9;color:#1b5e20">BT</div>
+                <div class="following-name">Ben Torres</div>
+                <div class="following-loc"><i class="fas fa-map-marker-alt"></i> Negros Occidental</div>
+                <div class="following-crops">
+                  <span class="crop-tag">Heirloom Rice</span>
+                  <span class="crop-tag">Corn</span>
+                </div>
+                <div class="following-rating"><span class="stars">★★★★★</span> 4.6</div>
+                <div class="following-btns">
+                  <a href="#" class="following-view-btn">View Farm</a>
+                  <button class="following-unfollow-btn" data-following="true">Following</button>
+                </div>
+              </div>
+
+              <div class="following-card">
+                <div class="following-avatar" style="background:#b2dfdb;color:#004d40">SR</div>
+                <div class="following-name">Sofia Ramos</div>
+                <div class="following-loc"><i class="fas fa-map-marker-alt"></i> Iloilo</div>
+                <div class="following-crops">
+                  <span class="crop-tag">Mangoes</span>
+                  <span class="crop-tag">Fruits</span>
+                </div>
+                <div class="following-rating"><span class="stars">★★★★★</span> 4.9</div>
+                <div class="following-btns">
+                  <a href="#" class="following-view-btn">View Farm</a>
+                  <button class="following-unfollow-btn" data-following="true">Following</button>
+                </div>
+              </div>
+
+              <div class="following-card">
+                <div class="following-avatar" style="background:#ffe0b2;color:#bf360c">PG</div>
+                <div class="following-name">Pedro Gonzales</div>
+                <div class="following-loc"><i class="fas fa-map-marker-alt"></i> Bukidnon</div>
+                <div class="following-crops">
+                  <span class="crop-tag">Vegetables</span>
+                  <span class="crop-tag">Herbs</span>
+                </div>
+                <div class="following-rating"><span class="stars">★★★★☆</span> 4.4</div>
+                <div class="following-btns">
+                  <a href="#" class="following-view-btn">View Farm</a>
+                  <button class="following-unfollow-btn" data-following="true">Following</button>
+                </div>
+              </div>
+
+              <div class="following-card">
+                <div class="following-avatar" style="background:#e8eaf6;color:#283593">LD</div>
+                <div class="following-name">Lorna Dela Cruz</div>
+                <div class="following-loc"><i class="fas fa-map-marker-alt"></i> Davao del Sur</div>
+                <div class="following-crops">
+                  <span class="crop-tag">Cacao</span>
+                  <span class="crop-tag">Banana</span>
+                </div>
+                <div class="following-rating"><span class="stars">★★★★★</span> 4.7</div>
+                <div class="following-btns">
+                  <a href="#" class="following-view-btn">View Farm</a>
+                  <button class="following-unfollow-btn" data-following="true">Following</button>
+                </div>
+              </div>
+
+              <div class="following-card">
+                <div class="following-avatar" style="background:#f8bbd0;color:#880e4f">RC</div>
+                <div class="following-name">Ramon Cruz</div>
+                <div class="following-loc"><i class="fas fa-map-marker-alt"></i> Benguet</div>
+                <div class="following-crops">
+                  <span class="crop-tag">Strawberries</span>
+                  <span class="crop-tag">Lettuce</span>
+                </div>
+                <div class="following-rating"><span class="stars">★★★★★</span> 4.9</div>
+                <div class="following-btns">
+                  <a href="#" class="following-view-btn">View Farm</a>
+                  <button class="following-unfollow-btn" data-following="true">Following</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div><!-- /tab-following -->
+
+
+        <!-- ══════════════════════════════
+             ABOUT TAB
+        ══════════════════════════════ -->
+        <div class="tab-panel" id="tab-about" role="tabpanel">
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <span>About Maria Santos</span>
+            </div>
+            <p class="about-bio">
+              Maria is a home cook and food enthusiast from Cagayan de Oro who discovered the Roots community while looking for a reliable source of fresh, organic produce. She strongly believes in the farm-to-table movement and makes it a point to source ingredients directly from local farmers. When she's not cooking, she's at the weekend market or posting about food and community on Roots.
+            </p>
+            <div class="about-details">
+              <div class="about-row">
+                <i class="fas fa-envelope"      aria-hidden="true"></i>
+                <span>maria.santos@roots.ph</span>
+              </div>
+              <div class="about-row">
+                <i class="fas fa-calendar-alt"  aria-hidden="true"></i>
+                <span>Joined Roots: February 2024</span>
+              </div>
+              <div class="about-row">
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                <span>Cagayan de Oro, Misamis Oriental</span>
+              </div>
+              <div class="about-row">
+                <i class="fas fa-heart"         aria-hidden="true"></i>
+                <span>Interests: Organic food, Home cooking, Sustainable living</span>
+              </div>
+            </div>
+          </div>
+        </div><!-- /tab-about -->
+
+      </main><!-- /main-panel -->
+
+    </div><!-- /profile-body -->
+
+  </div><!-- /page -->
+
+  <script src="/shared/nav.js"></script>
+  <script src="/shared/routes.js"></script>
+  <script src="/shared/base.js"></script>
+  <script src="/shared/userdd.js"></script>
+  <script src="/shared/notify.js"></script>
+
+  <script src="nonfarmer-profile.js"></script>
+
+  <script>
+    if (typeof initNotifications === 'function') initNotifications({ fakeData: true });
+    if (typeof Base !== 'undefined' && Base.resolveAll) Base.resolveAll();
+    if (typeof initUserDropdown === 'function') {
+      initUserDropdown({
+        user: { initials: 'MS', name: 'Maria Santos', role: 'Community Member · CDO' },
+        onAction: (action) => { if (action === 'logout') console.log('[Roots] Logout'); }
+      });
+    }
+  </script>
+
+</body>
+</html>

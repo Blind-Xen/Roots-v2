@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Livestock Payments (Placeholder)</title>
+  <link rel="stylesheet" href="livestock-styles.css">
+  <style>
+    body { background: #f4f7f9; }
+    .placeholder-shell { max-width: 720px; margin: 60px auto; padding: 28px 24px; background: white; border-radius: 22px; box-shadow: 0 20px 45px rgba(0,0,0,0.08); }
+    .placeholder-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .placeholder-header i { font-size: 26px; color: var(--livestock-green); }
+    .placeholder-title { font-size: 22px; font-weight: 800; margin: 0; }
+    .placeholder-subtitle { color: #555; margin: 8px 0 24px; line-height: 1.6; }
+    .placeholder-card { border: 1px solid #e2e8f0; padding: 18px 20px; border-radius: 16px; margin-bottom: 20px; }
+    .placeholder-card strong { display: block; margin-bottom: 8px; font-size: 15px; }
+    .placeholder-card p { margin: 0 0 8px; color: #424242; }
+    .placeholder-order-row { padding: 10px 0; border-bottom: 1px solid #eee; }
+    .placeholder-order-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .placeholder-grand-total { font-size: 18px; font-weight: 800; color: var(--livestock-green); margin-top: 12px; }
+    .placeholder-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn-secondary { border: 1px solid #cfd8dc; background: white; color: #333; }
+  </style>
+</head>
+<body>
+  <main class="placeholder-shell">
+    <div class="placeholder-header">
+      <i class="fas fa-money-bill-wave"></i>
+      <div>
+        <h1 class="placeholder-title">Payments Module Placeholder</h1>
+        <div class="placeholder-subtitle">Your purchase request has started. The actual payments module is not yet built, so this page is a placeholder for the future COD payment flow.</div>
+      </div>
+    </div>
+
+    <div class="placeholder-card" id="placeholderDetails">
+      <strong>Order summary</strong>
+      <div id="placeholderOrderLines"></div>
+      <p class="placeholder-grand-total" id="placeholderGrandTotal"></p>
+    </div>
+
+    <div class="placeholder-card">
+      <strong>What happens next</strong>
+      <p>The buyer will confirm the Cash on Delivery arrangement with the seller. This page is a placeholder that should later become your COD payment/reservation flow.</p>
+      <p style="margin-top:12px;color:#555;font-size:13px">For now, use the app to contact the seller and agree on delivery or pickup details.</p>
+    </div>
+
+    <div class="placeholder-actions">
+      <button class="btn" onclick="goBack()">Back to Listings</button>
+      <button class="btn btn-secondary" onclick="openContact()">Contact Farmer</button>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const linesEl = document.getElementById('placeholderOrderLines');
+    const totalEl = document.getElementById('placeholderGrandTotal');
+
+    function formatMoney(n) {
+      return '₱' + Number(n).toLocaleString();
+    }
+
+    let orderLines = [];
+
+    if (params.get('mode') === 'cart' && params.get('items')) {
+      try {
+        orderLines = JSON.parse(params.get('items'));
+      } catch (e) {
+        orderLines = [];
+      }
+    } else if (params.get('listing_id') || params.get('title')) {
+      const unitPrice = params.get('price') ? Number(params.get('price')) : null;
+      const qty = Math.max(1, parseInt(params.get('quantity') || '1', 10));
+      const lineTotal = params.get('total')
+        ? Number(params.get('total'))
+        : (unitPrice != null ? unitPrice * qty : null);
+      orderLines = [{
+        title: params.get('title') || 'Unknown listing',
+        price: unitPrice,
+        quantity: qty,
+        seller: params.get('seller') || 'Unknown seller',
+        line_total: lineTotal
+      }];
+    }
+
+    if (!orderLines.length) {
+      linesEl.innerHTML = '<p>No order details found.</p>';
+      totalEl.textContent = '';
+    } else {
+      linesEl.innerHTML = orderLines.map(item => {
+        const qty = item.quantity || 1;
+        const line = item.line_total != null
+          ? formatMoney(item.line_total)
+          : (item.price != null ? formatMoney(item.price * qty) : '—');
+        const unit = item.price != null ? formatMoney(item.price) + (qty > 1 ? ' each' : '') : '';
+        return `<div class="placeholder-order-row">
+          <p><strong>${item.title}</strong></p>
+          <p>${unit}${qty > 1 ? ' · Qty ' + qty : ''} · ${line}</p>
+          <p style="font-size:13px;color:#666">Seller: ${item.seller || '—'}</p>
+        </div>`;
+      }).join('');
+
+      const grand = params.get('total')
+        ? Number(params.get('total'))
+        : orderLines.reduce((s, i) => s + (i.line_total != null ? i.line_total : (i.price || 0) * (i.quantity || 1)), 0);
+      totalEl.textContent = 'Grand total: ' + formatMoney(grand);
+    }
+
+    function goBack() {
+      window.location.href = 'livestock.html';
+    }
+    function openContact() {
+      alert('Contact functionality is not implemented in this placeholder. Please return to the listing and contact the seller.');
+    }
+  </script>
+</body>
+</html>
